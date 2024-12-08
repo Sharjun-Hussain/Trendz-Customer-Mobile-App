@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trendz_customer/Components/Secondary_elevated_button.dart';
 import 'package:trendz_customer/Components/elevated_button.dart';
-import 'package:trendz_customer/Screens/auth/login_screen.dart';
 import 'package:trendz_customer/Screens/auth/signup_screen.dart';
 import 'package:trendz_customer/theming/app_colors.dart';
 import 'package:trendz_customer/widgets/socialLogin.dart';
@@ -45,8 +44,10 @@ class Onboarding extends StatelessWidget {
               text: "Login",
               icon: Icons.login,
               onPressed: () => {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => const Login()))
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const Onboarding()))
                   }),
           const SizedBox(
             height: 15,

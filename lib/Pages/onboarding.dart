@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:trendz_customer/Components/Secondary_elevated_button.dart';
 import 'package:trendz_customer/Components/elevated_button.dart';
-import 'package:trendz_customer/Screens/auth/login_screen.dart';
 import 'package:trendz_customer/Screens/auth/signup_screen.dart';
+
 import 'package:trendz_customer/theming/app_colors.dart';
 import 'package:trendz_customer/widgets/form_input.dart';
 import 'package:trendz_customer/widgets/socialLogin.dart';
 
-class Onboarding extends StatelessWidget {
+class Onboarding extends StatefulWidget {
   const Onboarding({super.key});
 
+  @override
+  State<Onboarding> createState() => _OnboardingState();
+}
+
+class _OnboardingState extends State<Onboarding> {
+  TextEditingController emailcontroller = TextEditingController();
+  TextEditingController passwordcontroller = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,16 +63,19 @@ class Onboarding extends StatelessWidget {
                   style: Theme.of(context).textTheme.headlineLarge,
                 ),
                 const SizedBox(height: 35),
-                const FormInput(
+                FormInput(
+                  inputType: "email",
+                  inputController: emailcontroller,
                   inputName: "Email",
                   placeHolder: "Enter Email",
-                  icon: Icon(Icons.email_outlined),
                 ),
                 const SizedBox(height: 25),
-                const FormInput(
+                FormInput(
+                  obscureText: true,
+                  inputType: "password",
+                  inputController: passwordcontroller,
                   inputName: "Password",
                   placeHolder: "Enter Password",
-                  icon: Icon(Icons.lock_outline),
                 ),
                 const SizedBox(height: 15),
                 Row(
@@ -85,7 +94,8 @@ class Onboarding extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const Login()),
+                      MaterialPageRoute(
+                          builder: (context) => const SignupScreen()),
                     );
                   },
                 ),
@@ -133,6 +143,31 @@ class Onboarding extends StatelessWidget {
                     ),
                   ],
                 ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Don't Have an Account?"),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    GestureDetector(
+                      onTap: () => {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const SignupScreen()))
+                      },
+                      child: const Text(
+                        "Register",
+                        style: TextStyle(color: AppColors.gold),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 45,
+                    ),
+                  ],
+                )
               ],
             ),
           ),

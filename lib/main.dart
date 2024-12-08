@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:trendz_customer/Pages/onboarding.dart';
 import 'package:trendz_customer/Screens/App/Home_screen.dart';
-import 'package:trendz_customer/Screens/Profile/Profile_page.dart';
-import 'package:trendz_customer/Screens/auth/login_screen.dart';
+
 import 'package:trendz_customer/Screens/auth/signup_screen.dart';
 import 'package:trendz_customer/theming/dark_theme.dart';
 import 'package:trendz_customer/theming/light_theme.dart';
