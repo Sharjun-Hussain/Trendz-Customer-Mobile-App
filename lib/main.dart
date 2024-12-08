@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trendz_customer/Pages/onboarding.dart';
-import 'package:trendz_customer/Screens/App/Home_screen.dart';
-
-import 'package:trendz_customer/Screens/auth/signup_screen.dart';
 import 'package:trendz_customer/theming/dark_theme.dart';
 import 'package:trendz_customer/theming/light_theme.dart';
 
@@ -21,7 +18,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: lightTheme,
         darkTheme: darkTheme,
-        themeMode: ThemeMode.light,
-        home: Onboarding());
+        themeMode: ThemeMode.dark,
+        home: const Onboarding());
   }
 }

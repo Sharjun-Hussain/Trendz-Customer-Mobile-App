@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:trendz_customer/Components/elevated_button.dart';
 import 'package:trendz_customer/Pages/onboarding.dart';
+import 'package:trendz_customer/Screens/App/Home_screen.dart';
 import 'package:trendz_customer/theming/app_colors.dart';
 import 'package:trendz_customer/widgets/form_input.dart';
 import 'package:trendz_customer/widgets/socialLogin.dart';
@@ -13,12 +15,22 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  TextEditingController emailcontroller = TextEditingController();
-  TextEditingController passwordcontroller = TextEditingController();
-  TextEditingController confirmpasswordcontroller = TextEditingController();
-  TextEditingController locationcontroller = TextEditingController();
-  TextEditingController mobilecontroller = TextEditingController();
-  TextEditingController fullnamecontroller = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
+  final TextEditingController locationController = TextEditingController();
+  final TextEditingController fullNameController = TextEditingController();
+
+  String mobileNumber = ''; // To store the complete phone number
+
+  String? _validateConfirmPassword(String value) {
+    if (value != passwordController.text) {
+      return 'Passwords do not match';
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,13 +74,11 @@ class _SignupScreenState extends State<SignupScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "Register",
-                    style: Theme.of(context).textTheme.headlineLarge,
-                  ),
+                  Text("Register",
+                      style: Theme.of(context).textTheme.headlineLarge),
                   const SizedBox(height: 35),
                   FormInput(
-                    inputController: emailcontroller,
+                    inputController: emailController,
                     inputType: "email",
                     inputName: "Email",
                     placeHolder: "Enter Email",
@@ -76,59 +86,88 @@ class _SignupScreenState extends State<SignupScreen> {
                   const SizedBox(height: 25),
                   FormInput(
                     obscureText: true,
-                    inputController: passwordcontroller,
+                    inputController: passwordController,
                     inputType: "password",
                     inputName: "Password",
                     placeHolder: "Enter Password",
                   ),
                   const SizedBox(height: 25),
                   FormInput(
-                    inputController: confirmpasswordcontroller,
+                    inputController: confirmPasswordController,
                     obscureText: true,
                     inputType: "password",
                     inputName: "Confirm Password",
-                    placeHolder: "Enter Confirm Password",
+                    placeHolder: "Re-enter Password",
                   ),
                   const SizedBox(height: 25),
                   FormInput(
-                    inputController: fullnamecontroller,
+                    inputController: fullNameController,
                     inputType: "text",
                     inputName: "Full Name",
                     placeHolder: "Enter Full Name",
                   ),
                   const SizedBox(height: 25),
                   FormInput(
-                    inputController: locationcontroller,
+                    inputController: locationController,
                     inputType: "text",
                     inputName: "Location",
                     placeHolder: "Enter Location",
                   ),
                   const SizedBox(height: 25),
-                  FormInput(
-                    inputController: mobilecontroller,
-                    inputType: "phone",
-                    inputName: "Mobile No",
-                    placeHolder: "Enter Enter Mobile Number",
-                  ),
-                  const SizedBox(height: 15),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      GestureDetector(
-                        onTap: () => {},
-                        child: const Text("Forgot Password?"),
-                      )
-                    ],
+                  IntlPhoneField(
+                    style: Theme.of(context).textTheme.bodySmall,
+                    decoration: InputDecoration(
+                      labelStyle: Theme.of(context).textTheme.bodySmall,
+                      labelText: 'Phone Number',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide:
+                            BorderSide(color: Theme.of(context).primaryColor),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide:
+                            BorderSide(color: Theme.of(context).primaryColor),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).primaryColor,
+                          width: 2.0,
+                        ),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(
+                          color: Colors.red,
+                          width: 2.0,
+                        ),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(
+                          color: Colors.red,
+                          width: 2.0,
+                        ),
+                      ),
+                    ),
+                    initialCountryCode: 'LK',
+                    onChanged: (phone) {
+                      setState(() {
+                        mobileNumber = phone.completeNumber;
+                      });
+                    },
                   ),
                   const SizedBox(height: 25),
                   CustomElevatedButton(
                     icon: Icons.cabin,
-                    text: "Login",
+                    text: "Register",
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const Onboarding()),
+                          builder: (context) => const HomeScreen(),
+                        ),
                       );
                     },
                   ),
@@ -137,10 +176,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Expanded(
-                        child: Divider(
-                          height: 1,
-                          color: AppColors.gold,
-                        ),
+                        child: Divider(height: 1, color: AppColors.gold),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -150,10 +186,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         ),
                       ),
                       const Expanded(
-                        child: Divider(
-                          height: 1,
-                          color: AppColors.gold,
-                        ),
+                        child: Divider(height: 1, color: AppColors.gold),
                       ),
                     ],
                   ),
@@ -184,26 +217,25 @@ class _SignupScreenState extends State<SignupScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text("Already have an account?"),
-                const SizedBox(
-                  width: 5,
-                ),
+                const SizedBox(width: 5),
                 GestureDetector(
                   onTap: () => {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const Onboarding()))
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const Onboarding(),
+                      ),
+                    )
                   },
                   child: const Text(
                     "Login",
                     style: TextStyle(
-                        decoration: TextDecoration.underline,
-                        color: AppColors.gold),
+                      decoration: TextDecoration.underline,
+                      color: AppColors.gold,
+                    ),
                   ),
                 ),
-                const SizedBox(
-                  height: 45,
-                ),
+                const SizedBox(height: 45),
               ],
             )
           ],
@@ -217,15 +249,15 @@ class BottomRoundedClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     Path path = Path();
-    path.lineTo(0, size.height - 45); // Bottom-left edge
+    path.lineTo(0, size.height - 45);
     path.quadraticBezierTo(
-      size.width / 2, // Control point (x)
-      size.height + 45, // Control point (y)
-      size.width, // End point (x)
-      size.height - 45, // End point (y)
+      size.width / 2,
+      size.height + 45,
+      size.width,
+      size.height - 45,
     );
-    path.lineTo(size.width, 0); // Top-right edge
-    path.close(); // Close the path
+    path.lineTo(size.width, 0);
+    path.close();
     return path;
   }
 
