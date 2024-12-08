@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:trendz_customer/widgets/profile/user_details.dart';
 
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+class PersonalPage extends StatelessWidget {
+  const PersonalPage({super.key});
 
   @override
   Widget build(BuildContext context) {

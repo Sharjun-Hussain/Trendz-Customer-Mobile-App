@@ -29,33 +29,8 @@ class _CancelledBookingsPageState extends State<CancelledBookingsPage> {
   ];
 
   // Controller for the search field
-  TextEditingController _searchController = TextEditingController();
+
   List<Map<String, String>> _filteredBookings = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _filteredBookings = cancelledBookings;
-  }
-
-  void _filterBookings(String query) {
-    setState(() {
-      if (query.isEmpty) {
-        _filteredBookings = cancelledBookings;
-      } else {
-        _filteredBookings = cancelledBookings.where((booking) {
-          return booking["title"]!.toLowerCase().contains(query.toLowerCase());
-        }).toList();
-      }
-    });
-  }
-
-  Widget _statusIcon(String status) {
-    if (status == 'Cancelled') {
-      return Icon(Icons.cancel, color: Colors.red, size: 24);
-    }
-    return SizedBox.shrink(); // No icon for other statuses
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,29 +40,13 @@ class _CancelledBookingsPageState extends State<CancelledBookingsPage> {
         child: Column(
           children: [
             // Search Field
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16.0),
-              child: TextField(
-                controller: _searchController,
-                onChanged: _filterBookings,
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.search, color: Colors.grey),
-                  hintText: 'Search for cancelled bookings...',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey[200],
-                ),
-              ),
-            ),
+
             // List of Cancelled Bookings
             Expanded(
               child: ListView.builder(
-                itemCount: _filteredBookings.length,
+                itemCount: cancelledBookings.length,
                 itemBuilder: (context, index) {
-                  final booking = _filteredBookings[index];
+                  final booking = cancelledBookings[index];
                   return Card(
                     margin: const EdgeInsets.symmetric(vertical: 8.0),
                     elevation: 4,
@@ -116,7 +75,18 @@ class _CancelledBookingsPageState extends State<CancelledBookingsPage> {
                         booking["details"]!,
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
-                      trailing: _statusIcon(booking["status"]!),
+                      trailing: Container(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          booking["status"]!,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ),
                       onTap: () {
                         // Implement action when a booking is tapped (e.g., navigate to booking details)
                       },

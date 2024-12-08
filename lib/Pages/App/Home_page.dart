@@ -1,12 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:provider/provider.dart';
 import 'package:trendz_customer/Components/elevated_button.dart';
+import 'package:trendz_customer/Pages/App/Service_page.dart';
+import 'package:trendz_customer/Pages/App/booking_page.dart';
+import 'package:trendz_customer/Providers/theme_provider.dart';
 import 'package:trendz_customer/widgets/Shop_Details.dart';
+import 'package:trendz_customer/widgets/service_tiles.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class HomePage extends StatefulWidget {
+  final Function? onNavigateToServices;
+  final Function? onNavigateToBookings;
+  const HomePage(
+      {super.key, this.onNavigateToBookings, this.onNavigateToServices});
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -22,13 +38,23 @@ class HomePage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Welcome Back, Joon!",
-                      style: Theme.of(context).textTheme.titleLarge,
+                      "Welcome, Joon!",
+                      style: Theme.of(context).textTheme.bodyLarge,
                     ),
-                    IconButton(
-                      onPressed: () => {},
-                      icon: const Icon(Icons.notifications_active),
-                    ),
+                    Row(
+                      children: [
+                        IconButton(
+                          onPressed: () => {themeProvider.toggleTheme()},
+                          icon: themeProvider.themeMode == ThemeMode.light
+                              ? const Icon(Iconsax.moon)
+                              : const Icon(Iconsax.sun),
+                        ),
+                        IconButton(
+                          onPressed: () => {},
+                          icon: const Icon(Iconsax.notification4),
+                        ),
+                      ],
+                    )
                   ],
                 ),
               ),
@@ -36,22 +62,26 @@ class HomePage extends StatelessWidget {
                 height: 15,
               ),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15),
+                padding: const EdgeInsets.only(
+                    top: 10.0, left: 15, right: 15, bottom: 5),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       "#SpecialForYou",
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     TextButton(
-                        onPressed: () => {}, child: const Text("See More"))
+                        onPressed: () => {},
+                        child: Text(
+                          "See More",
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ))
                   ],
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 10),
+                padding: const EdgeInsets.only(top: 1),
                 child: SizedBox(
                   height: 180, // Set the height for the PageView
                   child: PageView(
@@ -95,22 +125,29 @@ class HomePage extends StatelessWidget {
                 height: 20,
               ),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15),
+                padding: const EdgeInsets.only(
+                    top: 15.0, left: 15, right: 15, bottom: 5),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       "Your Recent Bookings ",
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     TextButton(
-                        onPressed: () => {}, child: const Text("All Bookings"))
+                        onPressed: () {
+                          widget.onNavigateToBookings!();
+                        },
+                        child: Text(
+                          "All Bookings",
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ))
                   ],
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(15),
+                padding: const EdgeInsets.only(
+                    top: 0.0, left: 15, right: 15, bottom: 15),
                 child: Container(
                   padding: const EdgeInsets.all(10),
                   width: double.infinity,
@@ -124,11 +161,11 @@ class HomePage extends StatelessWidget {
                     children: [
                       Text(
                         "Currently No Bookings ",
-                        style: Theme.of(context).textTheme.bodyLarge,
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       Text(
-                        "Be first to Book Appointment",
-                        style: Theme.of(context).textTheme.bodyMedium,
+                        "Book Appoinments to show here",
+                        style: Theme.of(context).textTheme.bodySmall,
                       ),
                       const SizedBox(
                         height: 20,
@@ -136,102 +173,64 @@ class HomePage extends StatelessWidget {
                       CustomElevatedButton(
                           text: "Book Appointment",
                           icon: Icons.sensor_occupied,
-                          onPressed: () => {})
+                          onPressed: () => {widget.onNavigateToBookings!()})
                     ],
                   )),
                 ),
               ),
               const SizedBox(
-                height: 20,
+                height: 5,
               ),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15),
+                padding: const EdgeInsets.only(
+                    top: 0.0, left: 15, right: 15, bottom: 5),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       "Services ",
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     TextButton(
-                        onPressed: () => {}, child: const Text("View ALl")),
+                        onPressed: () => {widget.onNavigateToServices!()},
+                        child: Text(
+                          "All Services",
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        )),
                   ],
                 ),
               ),
-              Padding(
+              const Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: Colors.greenAccent,
-                        ),
-                        height: 100,
-                        child: const Center(
-                          child: Text("HairCut"),
-                        ),
+                    EdgeInsets.only(top: 0.0, left: 15, right: 15, bottom: 5),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      ModernServiceTile(),
+                      SizedBox(
+                        width: 10,
                       ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: Colors.yellowAccent,
-                        ),
-                        height: 100,
-                        child: const Center(
-                          child: Text("Head Massage"),
-                        ),
+                      ModernServiceTile(),
+                      SizedBox(
+                        width: 10,
                       ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: Colors.redAccent,
-                        ),
-                        height: 100,
-                        child: const Center(
-                          child: Text("Beard "),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: Colors.blueAccent,
-                        ),
-                        height: 100,
-                        child: const Center(
-                          child: Text("Makeup"),
-                        ),
-                      ),
-                    )
-                  ],
+                    ],
+                  ),
                 ),
               ),
+              SizedBox(
+                height: 25,
+              ),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 15.0,
+                ),
                 child: Row(
                   children: [
                     Text(
                       "Shop Details ",
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
                 ),

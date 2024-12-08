@@ -29,26 +29,8 @@ class _UpcomingBookingsPageState extends State<UpcomingBookingsPage> {
   ];
 
   // Controller for the search field
-  TextEditingController _searchController = TextEditingController();
+
   List<Map<String, String>> _filteredBookings = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _filteredBookings = upcomingBookings;
-  }
-
-  void _filterBookings(String query) {
-    setState(() {
-      if (query.isEmpty) {
-        _filteredBookings = upcomingBookings;
-      } else {
-        _filteredBookings = upcomingBookings.where((booking) {
-          return booking["title"]!.toLowerCase().contains(query.toLowerCase());
-        }).toList();
-      }
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,29 +40,13 @@ class _UpcomingBookingsPageState extends State<UpcomingBookingsPage> {
         child: Column(
           children: [
             // Search Field
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16.0),
-              child: TextField(
-                controller: _searchController,
-                onChanged: _filterBookings,
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.search, color: Colors.grey),
-                  hintText: 'Search for bookings...',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey[200],
-                ),
-              ),
-            ),
+
             // List of Bookings
             Expanded(
               child: ListView.builder(
-                itemCount: _filteredBookings.length,
+                itemCount: upcomingBookings.length,
                 itemBuilder: (context, index) {
-                  final booking = _filteredBookings[index];
+                  final booking = upcomingBookings[index];
                   return Card(
                     margin: const EdgeInsets.symmetric(vertical: 8.0),
                     elevation: 4,

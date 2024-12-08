@@ -163,7 +163,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     icon: Icons.cabin,
                     text: "Register",
                     onPressed: () {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                           builder: (context) => const HomeScreen(),
@@ -191,11 +191,12 @@ class _SignupScreenState extends State<SignupScreen> {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  const Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Expanded(
                         child: Sociallogin(
+                          handleSocialLogin: () => {},
                           name: "Google",
                           socialImagePath: "lib/assets/images/google.png",
                         ),
@@ -203,6 +204,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       SizedBox(width: 20),
                       Expanded(
                         child: Sociallogin(
+                          handleSocialLogin: () => {},
                           name: "Facebook",
                           socialImagePath: "lib/assets/images/facebook.png",
                         ),

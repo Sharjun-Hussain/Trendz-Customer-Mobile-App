@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:trendz_customer/Pages/App/Home_page.dart';
 import 'package:trendz_customer/Pages/App/Service_page.dart';
 import 'package:trendz_customer/Pages/App/booking_page.dart';
@@ -36,9 +37,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> _pages = [
-      const HomePage(),
+      HomePage(
+          onNavigateToBookings: () => _onNavTap(3),
+          onNavigateToServices: () => _onNavTap(1)),
       ServicePage(
-        onNavigateToCart: () => _onNavTap(3), // Navigate to CartPage
+        onNavigateToCart: () => _onNavTap(2), // Navigate to CartPage
       ),
       const CartPage(),
       const BookingPage(),
@@ -56,14 +59,15 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+          BottomNavigationBarItem(icon: Icon(Iconsax.home_2), label: "Home"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.design_services), label: "Service"),
+              icon: Icon(Iconsax.activity4), label: "Service"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart), label: "Cart"),
+              icon: Icon(Iconsax.shopping_cart), label: "Cart"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.book_online), label: "Booking"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
+              icon: Icon(Iconsax.receipt), label: "Booking"),
+          BottomNavigationBarItem(
+              icon: Icon(Iconsax.frame_1), label: "Profile"),
         ],
         currentIndex: _selectedPageIndex, // Highlights the selected tab
         selectedItemColor: AppColors.gold, // Active tab color

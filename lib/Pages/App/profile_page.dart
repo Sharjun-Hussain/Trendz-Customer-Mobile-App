@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:trendz_customer/Components/elevated_button.dart';
+import 'package:trendz_customer/Pages/onboarding.dart';
+import 'package:trendz_customer/Screens/Profile/Profile_page.dart';
+import 'package:trendz_customer/Screens/Settings/mainSetting.dart';
 import 'package:trendz_customer/widgets/main_navigation.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -8,132 +13,119 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          "Profile",
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.more_vert,
-              size: 18,
-            ),
-          ),
-          const SizedBox(
-            width: 10,
-          )
-        ],
+        centerTitle: true,
+        title: const Text("Profile"),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            children: [
-              Container(
-                height: 90,
-                decoration: BoxDecoration(
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Column(
+              children: [
+                Container(
+                  height: 90,
+                  decoration: BoxDecoration(
                     color: Theme.of(context).cardColor,
-                    borderRadius: BorderRadius.circular(12)),
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CircleAvatar(
-                              child: Image.asset(
-                            width: 40,
-                            height: 40,
-                            "lib/assets/images/profile.png",
-                            fit: BoxFit.cover,
-                          )),
-                          // Container(
-                          //     width: 40,
-                          //     height: 40,
-                          //     decoration: const BoxDecoration(
-                          //         shape: BoxShape.circle, color: Colors.white),
-                          //     child: Image.asset(
-                          //       "assets/images/profile.png",
-                          //       fit: BoxFit.cover,
-                          //     ))
-                        ],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: CircleAvatar(
+                          radius: 40,
+                          backgroundImage:
+                              AssetImage("lib/assets/images/profile.png"),
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(8),
-                      child: Column(
+                      const SizedBox(width: 10),
+                      Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             "Mohamed Hussain Sharjun",
-                            style: Theme.of(context).textTheme.titleLarge,
+                            style: Theme.of(context).textTheme.bodyMedium,
                           ),
-                          Text("SharjunHussain@outlook.com",
-                              style: Theme.of(context).textTheme.bodyMedium)
+                          Text(
+                            "SharjunHussain@outlook.com",
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
                         ],
                       ),
-                    )
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              MainNavigationForUserProfilePage(
-                navigate: () => {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => ProfilePage()))
-                },
-                navigationtitle: "Your Profile",
-                navigationIcon: Icon(Icons.person_2_outlined,
-                    size: 24, color: Theme.of(context).primaryColor),
-              ),
-              MainNavigationForUserProfilePage(
-                navigate: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ProfilePage())),
-                navigationtitle: "Payment Methods",
-                navigationIcon: Icon(Icons.payment_rounded,
-                    size: 24, color: Theme.of(context).primaryColor),
-              ),
-              MainNavigationForUserProfilePage(
-                navigate: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ProfilePage())),
-                navigationtitle: "Settings",
-                navigationIcon: Icon(Icons.settings,
-                    size: 24, color: Theme.of(context).primaryColor),
-              ),
-              MainNavigationForUserProfilePage(
-                navigate: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ProfilePage())),
-                navigationtitle: "Transactions",
-                navigationIcon: Icon(Icons.route_outlined,
-                    size: 24, color: Theme.of(context).primaryColor),
-              ),
-              MainNavigationForUserProfilePage(
-                navigate: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ProfilePage())),
-                navigationtitle: "Help Center",
-                navigationIcon: Icon(Icons.info_outline,
-                    size: 24, color: Theme.of(context).primaryColor),
-              ),
-              MainNavigationForUserProfilePage(
-                navigate: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ProfilePage())),
-                navigationtitle: "Privacy Policy",
-                navigationIcon: Icon(Icons.screen_lock_portrait,
-                    size: 24, color: Theme.of(context).primaryColor),
-              ),
-              MainNavigationForUserProfilePage(
-                navigate: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ProfilePage())),
-                navigationtitle: "Log out",
-                navigationIcon: Icon(Icons.logout_outlined,
-                    size: 24, color: Theme.of(context).primaryColor),
-              )
-            ],
+                const SizedBox(height: 20),
+                CustomNavigation(
+                  navigate: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const PersonalPage()));
+                    // Navigate to a specific profile detail page
+                  },
+                  navigationtitle: "Your Profile",
+                  navigationIcon: Icon(
+                    Iconsax.personalcard,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+                CustomNavigation(
+                  navigate: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Mainsetting()));
+                    // Navigate to a settings page
+                  },
+                  navigationtitle: "Settings",
+                  navigationIcon: Icon(
+                    Iconsax.setting,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+                CustomNavigation(
+                  navigate: () {
+                    // Navigate to a privacy policy page
+                  },
+                  navigationtitle: "Privacy Policy",
+                  navigationIcon: Icon(
+                    Iconsax.setting_4,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
+          const Spacer(),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  "App Version: 1.0.0",
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.grey,
+                      ),
+                ),
+                const SizedBox(height: 10),
+                CustomElevatedButton(
+                  text: "Logout",
+                  icon: Iconsax.logout4,
+                  onPressed: () {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const Onboarding(),
+                      ),
+                      (route) => false,
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

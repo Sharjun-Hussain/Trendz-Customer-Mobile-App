@@ -19,20 +19,30 @@ final ThemeData lightTheme = ThemeData(
   ),
   textTheme: TextTheme(
     bodyLarge: GoogleFonts.ubuntu(
-      fontSize: 16,
+      fontSize: 24,
       color: AppColors.black, // Primary text
     ),
     bodyMedium: GoogleFonts.ubuntu(
-      fontSize: 14,
+      fontSize: 18,
       color: AppColors.black, // Secondary text
     ),
     bodySmall: GoogleFonts.ubuntu(
+      color: AppColors.black,
       fontSize: 16,
-
-      color: AppColors.black, // Headline
+      // Headline
     ),
     headlineLarge: GoogleFonts.ubuntu(
       fontSize: 24,
+      fontWeight: FontWeight.bold,
+      color: AppColors.black, // Headline
+    ),
+    headlineMedium: GoogleFonts.ubuntu(
+      fontSize: 18,
+      fontWeight: FontWeight.bold,
+      color: AppColors.black, // Headline
+    ),
+    headlineSmall: GoogleFonts.ubuntu(
+      fontSize: 16,
       fontWeight: FontWeight.bold,
       color: AppColors.black, // Headline
     ),
@@ -42,6 +52,11 @@ final ThemeData lightTheme = ThemeData(
       color: AppColors.black, // Headline
     ),
     titleMedium: GoogleFonts.ubuntu(
+      fontSize: 18,
+      fontWeight: FontWeight.bold,
+      color: AppColors.black, // Headline
+    ),
+    titleSmall: GoogleFonts.ubuntu(
       fontSize: 16,
       fontWeight: FontWeight.bold,
       color: AppColors.black, // Headline

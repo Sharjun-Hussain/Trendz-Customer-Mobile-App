@@ -120,7 +120,18 @@ class _CompletedBookingState extends State<CompletedBooking> {
                         booking["details"]!,
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
-                      trailing: _statusIcon(booking["status"]!),
+                      trailing: Container(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          booking["status"]!,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ),
                       onTap: () {
                         // Implement action when a booking is tapped (e.g., navigate to booking details)
                       },

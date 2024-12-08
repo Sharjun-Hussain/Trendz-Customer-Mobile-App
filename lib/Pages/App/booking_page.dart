@@ -17,19 +17,10 @@ class _BookingPageState extends State<BookingPage> {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           title: Text(
             "Booking",
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           ),
-          actions: [
-            Icon(
-              Icons.search,
-              color: Theme.of(context).primaryColor,
-            ),
-            SizedBox(
-              width: 8,
-            )
-          ],
           bottom: TabBar(
             indicatorColor: Theme.of(context).primaryColor,
             tabs: const [

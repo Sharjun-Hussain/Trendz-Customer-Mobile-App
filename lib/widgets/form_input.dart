@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 
 class FormInput extends StatefulWidget {
   final String inputName;
@@ -92,7 +93,7 @@ class _FormInputState extends State<FormInput> {
               suffixIcon: widget.inputType == "password"
                   ? IconButton(
                       icon: Icon(
-                        _isObscured ? Icons.visibility : Icons.visibility_off,
+                        _isObscured ? Iconsax.eye : Iconsax.eye_slash,
                       ),
                       onPressed: () {
                         setState(() {

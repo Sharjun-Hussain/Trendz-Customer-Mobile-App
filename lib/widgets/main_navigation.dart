@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class MainNavigationForUserProfilePage extends StatelessWidget {
+class CustomNavigation extends StatelessWidget {
   final String navigationtitle;
   final Widget navigationIcon; // Keep it as a Widget to allow flexibility
   final VoidCallback navigate;
 
-  const MainNavigationForUserProfilePage(
+  const CustomNavigation(
       {super.key,
       required this.navigationtitle,
       required this.navigationIcon,
@@ -14,7 +14,7 @@ class MainNavigationForUserProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => navigate,
+      onTap: () => navigate(), // Add parentheses to execute the function
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
@@ -35,7 +35,7 @@ class MainNavigationForUserProfilePage extends StatelessWidget {
                       ),
                       Text(
                         navigationtitle,
-                        style: Theme.of(context).textTheme.bodyLarge,
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ],
                   ),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:trendz_customer/theming/app_colors.dart';
 
 class ServicePage extends StatefulWidget {
-  final Function onNavigateToCart;
-  const ServicePage({Key? key, required this.onNavigateToCart})
-      : super(key: key);
+  final Function? onNavigateToCart;
+  const ServicePage({Key? key, this.onNavigateToCart}) : super(key: key);
 
   @override
   State<ServicePage> createState() => _ServicePageState();
@@ -72,7 +72,7 @@ class _ServicePageState extends State<ServicePage> {
                         children: [
                           Text(
                             "Hi Joon,",
-                            style: Theme.of(context).textTheme.titleLarge,
+                            style: Theme.of(context).textTheme.bodyLarge,
                           ),
                           const SizedBox(height: 4),
                           Text(
@@ -83,84 +83,6 @@ class _ServicePageState extends State<ServicePage> {
                         ],
                       ),
                     ),
-
-                    // Location and Date Picker
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // Location Dropdown
-                        Expanded(
-                          flex: 1,
-                          child: DropdownButtonFormField<String>(
-                            value: selectedLocation,
-                            decoration: InputDecoration(
-                              labelText: "Location",
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                            ),
-                            items: [
-                              "Sainthamaruthu",
-                              "Maruthamunai",
-                            ]
-                                .map((location) => DropdownMenuItem(
-                                      value: location,
-                                      child: Text(
-                                        location,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium,
-                                      ),
-                                    ))
-                                .toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                selectedLocation = value!;
-                              });
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-
-                        // Date Picker
-                        Expanded(
-                          flex: 1,
-                          child: GestureDetector(
-                            onTap: () async {
-                              DateTime? pickedDate = await showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime.now(),
-                                lastDate: DateTime(2100),
-                              );
-                              if (pickedDate != null) {
-                                setState(() {
-                                  selectedDate = pickedDate;
-                                });
-                              }
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12.0, vertical: 12.0),
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              child: Text(
-                                selectedDate == null
-                                    ? "Select Date"
-                                    : "${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}",
-                                style: TextStyle(
-                                    color: selectedDate == null
-                                        ? Theme.of(context).hintColor
-                                        : Theme.of(context).primaryColor),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
 
                     // Services List
                     Column(
@@ -173,11 +95,32 @@ class _ServicePageState extends State<ServicePage> {
                                 borderRadius: BorderRadius.circular(12)),
                             elevation: 3,
                             child: ExpansionTile(
-                              leading: Image.asset(
-                                service.image,
-                                width: 50,
-                                height: 50,
-                                fit: BoxFit.cover,
+                              leading: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: Icon(
+                                      service.isSelected
+                                          ? Icons.check_circle
+                                          : Icons.circle_outlined,
+                                      color: service.isSelected
+                                          ? Colors.green
+                                          : Colors.grey,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        service.isSelected =
+                                            !service.isSelected;
+                                      });
+                                    },
+                                  ),
+                                  Image.asset(
+                                    service.image,
+                                    width: 50,
+                                    height: 50,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ],
                               ),
                               title: Text(
                                 service.name,
@@ -191,21 +134,16 @@ class _ServicePageState extends State<ServicePage> {
                                 style: TextStyle(
                                     color: Theme.of(context).primaryColor),
                               ),
-                              trailing: IconButton(
-                                icon: Icon(
-                                  service.isSelected
-                                      ? Icons.check_circle
-                                      : Icons.circle_outlined,
-                                  color: service.isSelected
-                                      ? Colors.green
-                                      : Colors.grey,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    service.isSelected = !service.isSelected;
-                                  });
-                                },
+                              trailing: Icon(
+                                service.isExpanded
+                                    ? Icons.arrow_drop_up
+                                    : Icons.arrow_drop_down,
                               ),
+                              onExpansionChanged: (isExpanded) {
+                                setState(() {
+                                  service.isExpanded = isExpanded;
+                                });
+                              },
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
@@ -216,8 +154,7 @@ class _ServicePageState extends State<ServicePage> {
                                     children: [
                                       Text("Duration: ${service.duration}"),
                                       const SizedBox(height: 4),
-                                      Text(
-                                          "Description: ${service.description}"),
+                                      Text("${service.description}"),
                                     ],
                                   ),
                                 ),
@@ -238,7 +175,7 @@ class _ServicePageState extends State<ServicePage> {
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton(
               onPressed: () {
-                widget.onNavigateToCart;
+                widget.onNavigateToCart!();
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -266,6 +203,7 @@ class Service {
   final String duration;
   final String image;
   bool isSelected;
+  bool isExpanded;
 
   Service({
     required this.name,
@@ -274,5 +212,6 @@ class Service {
     required this.duration,
     required this.image,
     this.isSelected = false,
+    this.isExpanded = false,
   });
 }

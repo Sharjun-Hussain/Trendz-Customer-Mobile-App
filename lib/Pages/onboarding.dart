@@ -1,12 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:provider/provider.dart';
 import 'package:trendz_customer/Components/elevated_button.dart';
+import 'package:trendz_customer/Models/usermodel.dart';
+import 'package:trendz_customer/Providers/user_provider.dart';
+import 'package:trendz_customer/Screens/App/Home_screen.dart';
+import 'package:trendz_customer/Screens/auth/forgot_password.dart';
 import 'package:trendz_customer/Screens/auth/signup_screen.dart';
+import 'package:trendz_customer/Services/auth_services.dart';
 import 'package:trendz_customer/theming/app_colors.dart';
 import 'package:trendz_customer/widgets/form_input.dart';
 import 'package:trendz_customer/widgets/socialLogin.dart';
 
 class Onboarding extends StatefulWidget {
   const Onboarding({super.key});
+
+  void handleLogin(BuildContext context,
+      Future<Map<String, dynamic>> Function() loginMethod) async {
+    try {
+      final authService = AuthService();
+      final response = await loginMethod();
+      final user = User.fromJson(response);
+      // Provider.of<UserProvider>(context, listen: false).setUser(user);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.toString())));
+    }
+  }
 
   @override
   State<Onboarding> createState() => _OnboardingState();
@@ -84,23 +108,38 @@ class _OnboardingState extends State<Onboarding> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       GestureDetector(
-                        onTap: () => {},
+                        onTap: () => {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ForgotPassword()))
+                        },
                         child: const Text("Forgot Password?"),
                       )
                     ],
                   ),
                   const SizedBox(height: 25),
                   CustomElevatedButton(
-                    icon: Icons.cabin,
-                    text: "Login",
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const SignupScreen()),
-                      );
-                    },
-                  ),
+                      icon: Iconsax.login,
+                      text: "Login",
+                      onPressed: () => {
+                            if (emailcontroller.text.isEmpty ||
+                                passwordcontroller.text.isEmpty)
+                              {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content:
+                                            Text("Please Fill All Fields ")))
+                              }
+                            else
+                              widget.handleLogin(
+                                context,
+                                () => AuthService().loginWithEmailPassword(
+                                  emailcontroller.text,
+                                  passwordcontroller.text,
+                                ),
+                              ),
+                          }),
                   const SizedBox(height: 35),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -127,11 +166,15 @@ class _OnboardingState extends State<Onboarding> {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  const Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Expanded(
                         child: Sociallogin(
+                          handleSocialLogin: () => {
+                            () => widget.handleLogin(
+                                context, AuthService().loginWithGoogle),
+                          },
                           name: "Google",
                           socialImagePath: "lib/assets/images/google.png",
                         ),
@@ -139,6 +182,10 @@ class _OnboardingState extends State<Onboarding> {
                       SizedBox(width: 20),
                       Expanded(
                         child: Sociallogin(
+                          handleSocialLogin: () => {
+                            () => widget.handleLogin(
+                                context, AuthService().loginWithGoogle),
+                          },
                           name: "Facebook",
                           socialImagePath: "lib/assets/images/facebook.png",
                         ),

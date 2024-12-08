@@ -4,20 +4,24 @@ import 'package:trendz_customer/theming/app_colors.dart';
 class Sociallogin extends StatelessWidget {
   final String name;
   final String socialImagePath;
+  final Function handleSocialLogin;
   const Sociallogin(
-      {super.key, required this.name, required this.socialImagePath});
+      {super.key,
+      required this.name,
+      required this.socialImagePath,
+      required this.handleSocialLogin});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => {
-        showModalBottomSheet(
-            context: context,
-            // ignore: non_constant_identifier_names
-            builder: (BuildContext) {
-              return Container();
-            })
-      },
+      onTap: () => handleSocialLogin,
+      // showModalBottomSheet(
+      //     context: context,
+      //     // ignore: non_constant_identifier_names
+      //     builder: (BuildContext) {
+      //       return Container();
+      //     })
+
       child: Container(
         padding: const EdgeInsets.all(10.0),
         decoration: BoxDecoration(
