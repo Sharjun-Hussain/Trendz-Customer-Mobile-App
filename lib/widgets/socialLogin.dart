@@ -38,7 +38,10 @@ class Sociallogin extends StatelessWidget {
             const SizedBox(
               width: 10,
             ),
-            Text(name)
+            Text(
+              name,
+              style: Theme.of(context).textTheme.bodySmall,
+            )
           ],
         ),
       ),

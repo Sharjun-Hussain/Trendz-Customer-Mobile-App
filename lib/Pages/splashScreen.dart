@@ -31,7 +31,7 @@ class _SplashscreenState extends State<Splashscreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              height: 80,
+              height: 60,
             ),
             // Title text
             Text("Trendz Hair Studio",

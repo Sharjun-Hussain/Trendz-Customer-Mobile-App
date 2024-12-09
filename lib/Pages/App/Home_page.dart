@@ -188,7 +188,7 @@ class _HomePageState extends State<HomePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Services ",
+                      "Popular Services",
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     TextButton(
@@ -207,11 +207,19 @@ class _HomePageState extends State<HomePage> {
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      ModernServiceTile(),
+                      ModernServiceTile(
+                        serviceName: "Haircut",
+                        price: "Rs. 500.00",
+                        icon: Iconsax.flash_1,
+                      ),
                       SizedBox(
                         width: 10,
                       ),
-                      ModernServiceTile(),
+                      ModernServiceTile(
+                        serviceName: "Haircut",
+                        price: "Rs. 500.00",
+                        icon: Iconsax.scissor_1,
+                      ),
                       SizedBox(
                         width: 10,
                       ),

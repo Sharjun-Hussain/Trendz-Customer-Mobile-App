@@ -28,8 +28,6 @@ class _UpcomingBookingsPageState extends State<UpcomingBookingsPage> {
     },
   ];
 
-  // Controller for the search field
-
   List<Map<String, String>> _filteredBookings = [];
 
   @override
@@ -48,13 +46,15 @@ class _UpcomingBookingsPageState extends State<UpcomingBookingsPage> {
                 itemBuilder: (context, index) {
                   final booking = upcomingBookings[index];
                   return Card(
+                    color:
+                        Theme.of(context).cardColor, // Updated to use cardColor
                     margin: const EdgeInsets.symmetric(vertical: 8.0),
                     elevation: 4,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: ListTile(
-                      contentPadding: EdgeInsets.all(16),
+                      contentPadding: const EdgeInsets.all(16),
                       leading: ClipRRect(
                         borderRadius: BorderRadius.circular(8),
                         child: Image.asset(
@@ -76,8 +76,8 @@ class _UpcomingBookingsPageState extends State<UpcomingBookingsPage> {
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       trailing: Container(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 4, horizontal: 8),
                         decoration: BoxDecoration(
                           color: Theme.of(context).primaryColor,
                           borderRadius: BorderRadius.circular(8),

@@ -20,6 +20,7 @@ class _BookingPageState extends State<BookingPage> {
           centerTitle: true,
           title: Text(
             "Booking",
+            style: Theme.of(context).textTheme.bodySmall,
           ),
           bottom: TabBar(
             indicatorColor: Theme.of(context).primaryColor,

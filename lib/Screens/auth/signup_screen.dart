@@ -44,27 +44,26 @@ class _SignupScreenState extends State<SignupScreen> {
                 height: 150,
                 width: double.infinity,
                 color: Theme.of(context).primaryColor,
-                child: SafeArea(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Welcome To Trendz",
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleLarge
-                            ?.copyWith(color: Colors.white),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        "Register to Continue",
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyMedium
-                            ?.copyWith(color: Colors.white),
-                      )
-                    ],
-                  ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 8),
+                    Text(
+                      "Welcome To Trendz",
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleLarge
+                          ?.copyWith(color: Colors.white),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      "Register to Continue",
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(color: Colors.white),
+                    )
+                  ],
                 ),
               ),
             ),
@@ -182,7 +181,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: Text(
                           "or sign in with",
-                          style: Theme.of(context).textTheme.bodyMedium,
+                          style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ),
                       const Expanded(
@@ -218,7 +217,10 @@ class _SignupScreenState extends State<SignupScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text("Already have an account?"),
+                Text(
+                  "Already have an account?",
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
                 const SizedBox(width: 5),
                 GestureDetector(
                   onTap: () => {

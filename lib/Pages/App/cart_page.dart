@@ -73,7 +73,10 @@ class _CartPageState extends State<CartPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Cart"),
+        title: Text(
+          "Cart",
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
         actions: const [
           Text("Sainthamaruthu"),
           SizedBox(width: 30),
@@ -88,11 +91,17 @@ class _CartPageState extends State<CartPage> {
             delegate: SliverChildListDelegate(
               [
                 const SizedBox(height: 16),
-                const Padding(
+                Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: 15.0,
                   ),
-                  child: Text("You selected services are"),
+                  child: Text(
+                    "You selected services are",
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall
+                        ?.copyWith(fontWeight: FontWeight.w600),
+                  ),
                 ),
                 const SizedBox(
                   height: 5,
@@ -148,13 +157,13 @@ class _CartPageState extends State<CartPage> {
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodySmall
-                                        ?.copyWith(fontWeight: FontWeight.bold),
+                                        ?.copyWith(fontWeight: FontWeight.w600),
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
                                     service["price"]!,
                                     style:
-                                        Theme.of(context).textTheme.bodyMedium,
+                                        Theme.of(context).textTheme.bodySmall,
                                   ),
                                 ],
                               ),
@@ -191,8 +200,9 @@ class _CartPageState extends State<CartPage> {
                           timeSlot,
                           style: Theme.of(context)
                               .textTheme
-                              .bodyMedium
+                              .bodySmall
                               ?.copyWith(
+                                fontSize: 13,
                                 color: isSelected ? Colors.white : Colors.black,
                               ),
                         ),
@@ -216,40 +226,55 @@ class _CartPageState extends State<CartPage> {
                         ?.copyWith(fontWeight: FontWeight.bold),
                   ),
                 ),
-                const SizedBox(height: 16),
 
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
                     color: const Color.fromARGB(96, 124, 123, 123),
-                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 5),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text("Total Services:"),
-                          Text("${selectedServices.length}"),
-                        ],
-                      ),
-                      const Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("Booking Date:"),
-                          Text("12/12/2024"),
+                          Text("Total Services:",
+                              style: Theme.of(context).textTheme.bodySmall),
+                          Text(
+                            "${selectedServices.length}",
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
                         ],
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text("Booking Time:"),
-                          Text(selectedTime),
+                          Text(
+                            "Booking Date:",
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                          Text(
+                            "12/12/2024",
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
                         ],
                       ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Booking Time:",
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                          Text(
+                            selectedTime,
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
                     ],
                   ),
                 ),

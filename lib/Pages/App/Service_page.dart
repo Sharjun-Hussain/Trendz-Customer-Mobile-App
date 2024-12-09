@@ -53,7 +53,10 @@ class _ServicePageState extends State<ServicePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Services"),
+        title: Text(
+          "Services",
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
         centerTitle: true,
       ),
       body: Column(
@@ -77,7 +80,7 @@ class _ServicePageState extends State<ServicePage> {
                           const SizedBox(height: 4),
                           Text(
                             "Pick Whatever Service You Want?",
-                            style: Theme.of(context).textTheme.bodyMedium,
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                           const SizedBox(height: 16),
                         ],
@@ -124,15 +127,17 @@ class _ServicePageState extends State<ServicePage> {
                               ),
                               title: Text(
                                 service.name,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
+                                style: Theme.of(context).textTheme.bodySmall,
                               ),
                               subtitle: Text(
                                 service.price,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    color: Theme.of(context).primaryColor),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                        color: Theme.of(context).primaryColor),
                               ),
                               trailing: Icon(
                                 service.isExpanded

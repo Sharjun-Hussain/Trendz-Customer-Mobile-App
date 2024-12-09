@@ -105,6 +105,7 @@ class _FormInputState extends State<FormInput> {
                   : null,
               labelText: widget.inputName,
               hintText: widget.placeHolder,
+              hintStyle: Theme.of(context).textTheme.bodySmall,
               labelStyle: Theme.of(context).textTheme.bodySmall,
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(

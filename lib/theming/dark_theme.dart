@@ -23,7 +23,7 @@ final ThemeData darkTheme = ThemeData(
       ),
       bodySmall: GoogleFonts.ubuntu(
         fontSize: 16,
-
+        fontWeight: FontWeight.normal,
         color: AppColors.white, // Headline
       ),
 
@@ -36,7 +36,7 @@ final ThemeData darkTheme = ThemeData(
       ),
       headlineMedium: GoogleFonts.ubuntu(
         fontSize: 18,
-        fontWeight: FontWeight.w400,
+        fontWeight: FontWeight.w600,
         color: AppColors.gold,
       ),
       headlineSmall: GoogleFonts.ubuntu(

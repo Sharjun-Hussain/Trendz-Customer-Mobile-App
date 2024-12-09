@@ -1,20 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:trendz_customer/theming/app_colors.dart'; // Ensure you have Iconsax package installed
+import 'package:trendz_customer/theming/app_colors.dart'; // Ensure AppColors is implemented correctly
 
 class ModernServiceTile extends StatelessWidget {
-  const ModernServiceTile({super.key});
+  final String serviceName;
+  final String price;
+  final IconData icon;
+
+  const ModernServiceTile({
+    super.key,
+    required this.serviceName,
+    required this.price,
+    required this.icon,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.6,
+      height: 130,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         gradient: LinearGradient(
           colors: [
-            AppColors.secondaryGold.withOpacity(0.8), // Light gold color
-            AppColors.secondaryGold, // Darker shade
+            AppColors.secondaryGold,
+            AppColors.secondaryGold.withOpacity(0.8), // Lighter shade
           ],
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
@@ -27,10 +37,9 @@ class ModernServiceTile extends StatelessWidget {
           ),
         ],
       ),
-      height: 100,
       child: Stack(
         children: [
-          // Rounded shapes behind the icon
+          // Rounded shape behind the icon
           Positioned(
             top: -15,
             right: -15,
@@ -44,11 +53,11 @@ class ModernServiceTile extends StatelessWidget {
             ),
           ),
           Positioned(
-            top: -15,
-            right: -15,
+            top: -25,
+            right: -25,
             child: Container(
-              width: 50,
-              height: 50,
+              width: 70,
+              height: 70,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: AppColors.secondaryGold.withOpacity(0.4),
@@ -60,7 +69,9 @@ class ModernServiceTile extends StatelessWidget {
             top: 10,
             right: 10,
             child: Container(
-              padding: const EdgeInsets.all(8.0),
+              width: 50,
+              height: 50,
+              padding: const EdgeInsets.all(1.0),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white,
@@ -72,24 +83,35 @@ class ModernServiceTile extends StatelessWidget {
                   ),
                 ],
               ),
-              child: const Icon(
-                Iconsax.add,
-                color: AppColors.secondaryGold,
-                size: 24,
+              child: Icon(
+                icon,
+                color: AppColors.black,
+                size: 40,
               ),
             ),
           ),
           // Centered text for the service
-          const Positioned(
+          Positioned(
             bottom: 10,
             left: 10,
-            child: Text(
-              "HairCut",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  serviceName,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleLarge
+                      ?.copyWith(color: Colors.white),
+                ),
+                Text(
+                  "Price: $price",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall
+                      ?.copyWith(color: Colors.white),
+                ),
+              ],
             ),
           ),
         ],

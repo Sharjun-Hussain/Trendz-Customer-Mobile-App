@@ -52,27 +52,26 @@ class _OnboardingState extends State<Onboarding> {
               height: 150,
               width: double.infinity,
               color: Theme.of(context).primaryColor,
-              child: SafeArea(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Welcome To Trendz",
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge
-                          ?.copyWith(color: Colors.white),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      "Sign in to Continue",
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(color: Colors.white),
-                    )
-                  ],
-                ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 8),
+                  Text(
+                    "Welcome To Trendz",
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleLarge
+                        ?.copyWith(color: Colors.white),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    "Sign in to Continue",
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(color: Colors.white),
+                  )
+                ],
               ),
             ),
           ),
@@ -114,7 +113,10 @@ class _OnboardingState extends State<Onboarding> {
                               MaterialPageRoute(
                                   builder: (context) => ForgotPassword()))
                         },
-                        child: const Text("Forgot Password?"),
+                        child: Text(
+                          "Forgot Password?",
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
                       )
                     ],
                   ),
@@ -154,7 +156,7 @@ class _OnboardingState extends State<Onboarding> {
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: Text(
                           "or sign in with",
-                          style: Theme.of(context).textTheme.bodyMedium,
+                          style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ),
                       const Expanded(
@@ -196,7 +198,10 @@ class _OnboardingState extends State<Onboarding> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text("Don't Have an Account?"),
+                      Text(
+                        "Don't Have an Account?",
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
                       const SizedBox(
                         width: 5,
                       ),
