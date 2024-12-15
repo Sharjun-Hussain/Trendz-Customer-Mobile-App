@@ -4,7 +4,7 @@ import 'package:trendz_customer/theming/app_colors.dart';
 class CustomElevatedButton extends StatelessWidget {
   final String text;
   final IconData icon;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final Color backgroundColor;
   final Color textColor;
   final Color borderColor; // New property for border color
@@ -24,7 +24,7 @@ class CustomElevatedButton extends StatelessWidget {
     this.textColor = AppColors.black, // Default text color
     this.borderColor = Colors.transparent, // Default border color
     this.elevation = 5.0, // Default elevation
-    this.paddingVertical = 4.0, // Default vertical padding
+    this.paddingVertical = 12.0, // Default vertical padding
     this.paddingHorizontal = 24.0, // Default horizontal padding
     this.borderRadius =
         const BorderRadius.all(Radius.circular(50)), // Default border radius

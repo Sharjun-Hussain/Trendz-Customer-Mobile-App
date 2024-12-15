@@ -6,13 +6,14 @@ class ModernServiceTile extends StatelessWidget {
   final String serviceName;
   final String price;
   final IconData icon;
+  final String imageurl;
 
-  const ModernServiceTile({
-    super.key,
-    required this.serviceName,
-    required this.price,
-    required this.icon,
-  });
+  const ModernServiceTile(
+      {super.key,
+      required this.serviceName,
+      required this.price,
+      required this.icon,
+      required this.imageurl});
 
   @override
   Widget build(BuildContext context) {
@@ -20,15 +21,16 @@ class ModernServiceTile extends StatelessWidget {
       width: MediaQuery.of(context).size.width * 0.6,
       height: 130,
       decoration: BoxDecoration(
+        image: DecorationImage(image: AssetImage(imageurl), fit: BoxFit.cover),
         borderRadius: BorderRadius.circular(12),
-        gradient: LinearGradient(
-          colors: [
-            AppColors.secondaryGold,
-            AppColors.secondaryGold.withOpacity(0.8), // Lighter shade
-          ],
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-        ),
+        // gradient: LinearGradient(
+        //   colors: [
+        //     AppColors.secondaryGold,
+        //     AppColors.secondaryGold.withOpacity(0.8), // Lighter shade
+        //   ],
+        //   begin: Alignment.topRight,
+        //   end: Alignment.bottomLeft,
+        // ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
@@ -65,31 +67,31 @@ class ModernServiceTile extends StatelessWidget {
             ),
           ),
           // Icon at the top right corner
-          Positioned(
-            top: 10,
-            right: 10,
-            child: Container(
-              width: 50,
-              height: 50,
-              padding: const EdgeInsets.all(1.0),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    offset: const Offset(0, 2),
-                    blurRadius: 4,
-                  ),
-                ],
-              ),
-              child: Icon(
-                icon,
-                color: AppColors.black,
-                size: 40,
-              ),
-            ),
-          ),
+          // Positioned(
+          //   top: 10,
+          //   right: 10,
+          //   child: Container(
+          //     width: 50,
+          //     height: 50,
+          //     padding: const EdgeInsets.all(1.0),
+          //     decoration: BoxDecoration(
+          //       shape: BoxShape.circle,
+          //       color: Colors.white,
+          //       boxShadow: [
+          //         BoxShadow(
+          //           color: Colors.black.withOpacity(0.2),
+          //           offset: const Offset(0, 2),
+          //           blurRadius: 4,
+          //         ),
+          //       ],
+          //     ),
+          //     child: Icon(
+          //       icon,
+          //       color: AppColors.black,
+          //       size: 40,
+          //     ),
+          //   ),
+          // ),
           // Centered text for the service
           Positioned(
             bottom: 10,

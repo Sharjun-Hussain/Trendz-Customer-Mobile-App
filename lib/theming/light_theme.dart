@@ -12,6 +12,7 @@ final ThemeData lightTheme = ThemeData(
   primaryColor: AppColors.gold,
   hintColor: AppColors.black,
 
+  shadowColor: const Color.fromARGB(201, 224, 224, 224),
   scaffoldBackgroundColor: AppColors.white, // App background
   appBarTheme: const AppBarTheme(
     backgroundColor: AppColors.gold, // App bar
@@ -23,13 +24,26 @@ final ThemeData lightTheme = ThemeData(
       color: AppColors.black, // Primary text
     ),
     bodyMedium: GoogleFonts.ubuntu(
-      fontSize: 18,
+      fontSize: 14,
       color: AppColors.black, // Secondary text
     ),
     bodySmall: GoogleFonts.ubuntu(
       color: AppColors.black,
-      fontSize: 16,
+      fontSize: 13,
       // Headline
+    ),
+    labelLarge: GoogleFonts.ubuntu(
+      fontSize: 24,
+      color: AppColors.black, // Primary text
+    ),
+    labelMedium: GoogleFonts.ubuntu(
+      fontSize: 16,
+      color: AppColors.black, // Secondary text
+    ),
+    labelSmall: GoogleFonts.ubuntu(
+      fontSize: 13,
+      fontWeight: FontWeight.normal,
+      color: AppColors.black, // Headline
     ),
     headlineLarge: GoogleFonts.ubuntu(
       fontSize: 24,
@@ -37,12 +51,12 @@ final ThemeData lightTheme = ThemeData(
       color: AppColors.black, // Headline
     ),
     headlineMedium: GoogleFonts.ubuntu(
-      fontSize: 18,
+      fontSize: 14,
       fontWeight: FontWeight.bold,
       color: AppColors.black, // Headline
     ),
     headlineSmall: GoogleFonts.ubuntu(
-      fontSize: 16,
+      fontSize: 12,
       fontWeight: FontWeight.bold,
       color: AppColors.black, // Headline
     ),
@@ -52,12 +66,12 @@ final ThemeData lightTheme = ThemeData(
       color: AppColors.black, // Headline
     ),
     titleMedium: GoogleFonts.ubuntu(
-      fontSize: 18,
+      fontSize: 14,
       fontWeight: FontWeight.bold,
       color: AppColors.black, // Headline
     ),
     titleSmall: GoogleFonts.ubuntu(
-      fontSize: 16,
+      fontSize: 12,
       fontWeight: FontWeight.bold,
       color: AppColors.black, // Headline
     ),

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:provider/provider.dart';
+import 'package:trendz_customer/Providers/user_provider.dart';
 import 'package:trendz_customer/theming/app_colors.dart';
 
 class ServicePage extends StatefulWidget {
-  final Function? onNavigateToCart;
+  final Function(String date, String branch)? onNavigateToCart;
   const ServicePage({Key? key, this.onNavigateToCart}) : super(key: key);
 
   @override
@@ -10,7 +14,25 @@ class ServicePage extends StatefulWidget {
 }
 
 class _ServicePageState extends State<ServicePage> {
+  final securestorage = const FlutterSecureStorage();
+  String? _fullname;
+
+  Future<void> _loadUserData() async {
+    String? fullname = await securestorage.read(key: "fullname");
+
+    setState(() {
+      _fullname = fullname;
+    });
+  }
+
+  @override
+  void initState() {
+    _loadUserData();
+  }
   // Services data
+
+  String selectedLocation = "Maruthamunai"; // Default branch
+  String selectedDate = "Salect Date";
   final List<Service> services = [
     Service(
       name: "Haircut",
@@ -46,16 +68,16 @@ class _ServicePageState extends State<ServicePage> {
     ),
   ];
 
-  String selectedLocation = "Sainthamaruthu";
-  DateTime? selectedDate;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
           "Services",
-          style: Theme.of(context).textTheme.bodySmall,
+          style: Theme.of(context)
+              .textTheme
+              .bodySmall
+              ?.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
@@ -64,34 +86,125 @@ class _ServicePageState extends State<ServicePage> {
           Expanded(
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(10.0),
                 child: Column(
                   children: [
                     // Greeting and instruction
                     Align(
                       alignment: Alignment.centerLeft,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Hi $_fullname,",
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              "Select the Services",
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 5),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            "Hi Joon,",
-                            style: Theme.of(context).textTheme.bodyLarge,
+                          // Location Dropdown
+                          Expanded(
+                            flex: 1,
+                            child: DropdownButtonFormField<String>(
+                              value: selectedLocation,
+                              decoration: InputDecoration(
+                                isDense: true,
+                                labelText: "Location",
+                                labelStyle:
+                                    Theme.of(context).textTheme.bodyMedium,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                              ),
+                              items: [
+                                "Sainthamaruthu",
+                                "Maruthamunai",
+                              ]
+                                  .map((location) => DropdownMenuItem(
+                                        value: location,
+                                        child: Text(
+                                          location,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall,
+                                        ),
+                                      ))
+                                  .toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedLocation = value!;
+                                });
+                              },
+                            ),
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            "Pick Whatever Service You Want?",
-                            style: Theme.of(context).textTheme.bodySmall,
+                          const SizedBox(width: 10),
+
+                          // Date Picker
+                          Expanded(
+                            flex: 1,
+                            child: GestureDetector(
+                              onTap: () async {
+                                DateTime now = DateTime.now();
+                                DateTime threeDaysLater =
+                                    now.add(const Duration(days: 2));
+
+                                DateTime? pickedDate = await showDatePicker(
+                                  context: context,
+                                  initialDate: now,
+                                  firstDate: now,
+                                  lastDate: threeDaysLater,
+                                );
+
+                                if (pickedDate != null) {
+                                  setState(() {
+                                    selectedDate =
+                                        "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+                                  });
+                                }
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12.0, vertical: 10.0),
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: Text(
+                                  selectedDate == null
+                                      ? "Select Date"
+                                      : selectedDate,
+                                  style: TextStyle(
+                                    color: selectedDate == null
+                                        ? Theme.of(context).primaryColor
+                                        : Theme.of(context).primaryColor,
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
-                          const SizedBox(height: 16),
                         ],
                       ),
                     ),
-
                     // Services List
                     Column(
                       children: services.map((service) {
                         return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          padding: const EdgeInsets.symmetric(vertical: 2.0),
                           child: Card(
                             color: Theme.of(context).cardColor,
                             shape: RoundedRectangleBorder(
@@ -119,15 +232,15 @@ class _ServicePageState extends State<ServicePage> {
                                   ),
                                   Image.asset(
                                     service.image,
-                                    width: 50,
-                                    height: 50,
+                                    width: 40,
+                                    height: 40,
                                     fit: BoxFit.cover,
                                   ),
                                 ],
                               ),
                               title: Text(
                                 service.name,
-                                style: Theme.of(context).textTheme.bodySmall,
+                                style: Theme.of(context).textTheme.bodyMedium,
                               ),
                               subtitle: Text(
                                 service.price,
@@ -141,8 +254,8 @@ class _ServicePageState extends State<ServicePage> {
                               ),
                               trailing: Icon(
                                 service.isExpanded
-                                    ? Icons.arrow_drop_up
-                                    : Icons.arrow_drop_down,
+                                    ? Iconsax.arrow_up_2
+                                    : Iconsax.arrow_down_1,
                               ),
                               onExpansionChanged: (isExpanded) {
                                 setState(() {
@@ -151,9 +264,10 @@ class _ServicePageState extends State<ServicePage> {
                               },
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16.0, vertical: 8.0),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
                                   child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
@@ -179,21 +293,42 @@ class _ServicePageState extends State<ServicePage> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton(
-              onPressed: () {
-                widget.onNavigateToCart!();
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+                onPressed: () {
+                  if (selectedDate != "Select Date" &&
+                      selectedLocation.isNotEmpty) {
+                    widget.onNavigateToCart!(selectedDate, selectedLocation);
+                  } else {
+                    // Show an error message if fields are empty
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content:
+                              Text("Please select both date and location")),
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  minimumSize: const Size(double.infinity, 50),
                 ),
-                minimumSize: const Size(double.infinity, 50),
-              ),
-              child: const Text(
-                "Go to Booking",
-                style: TextStyle(fontSize: 16),
-              ),
-            ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "Next",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    SizedBox(
+                      width: 4,
+                    ),
+                    Icon(
+                      Iconsax.arrow_right_3,
+                      size: 16,
+                    )
+                  ],
+                )),
           ),
         ],
       ),

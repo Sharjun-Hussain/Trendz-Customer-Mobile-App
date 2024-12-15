@@ -1,11 +1,12 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import 'package:trendz_customer/Components/elevated_button.dart';
-import 'package:trendz_customer/Pages/App/Service_page.dart';
-import 'package:trendz_customer/Pages/App/booking_page.dart';
+import 'package:trendz_customer/Pages/App/service_view_page.dart';
 import 'package:trendz_customer/Providers/theme_provider.dart';
+import 'package:trendz_customer/Providers/user_provider.dart';
 import 'package:trendz_customer/widgets/Shop_Details.dart';
 import 'package:trendz_customer/widgets/service_tiles.dart';
 
@@ -19,10 +20,72 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
+final List<Map<String, dynamic>> services = [
+  {
+    "serviceName": "Haircut",
+    "price": "Rs. 500.00",
+    "icon": Iconsax.flash_1,
+    "tag": "hero-haircut",
+    "image": "lib/assets/images/haircut_service.jpg"
+  },
+  {
+    "serviceName": "Haircut",
+    "price": "Rs. 500.00",
+    "icon": Iconsax.scissor_1,
+    "tag": "hero-scissors",
+    "image": "lib/assets/images/haircut_service.jpg"
+  },
+];
+
 class _HomePageState extends State<HomePage> {
+  late Timer _carouselTimer;
+  late final PageController _pageController;
+  final secureStorage = const FlutterSecureStorage();
+
+  int _currentPage = 0;
+  String? _fullName;
+
+  Future<void> _loadUserData() async {
+    // Read the full name from SecureStorage
+    String? fullName = await secureStorage.read(key: "fullname");
+
+    setState(() {
+      _fullName = fullName;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+    _pageController = PageController(viewportFraction: 0.9);
+
+    // Start a timer to change the page every 2 seconds
+    _carouselTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
+      if (_pageController.hasClients) {
+        _currentPage++;
+        _pageController.animateToPage(
+          _currentPage % 3, // Loop through 3 pages
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _carouselTimer.cancel(); // Cancel the timer to avoid memory leaks
+    _pageController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+
+    // final userProvider = Provider.of<UserProvider>(context);
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -38,7 +101,7 @@ class _HomePageState extends State<HomePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Welcome, Joon!",
+                      "Welcome, $_fullName!",
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     Row(
@@ -47,7 +110,7 @@ class _HomePageState extends State<HomePage> {
                           onPressed: () => {themeProvider.toggleTheme()},
                           icon: themeProvider.themeMode == ThemeMode.light
                               ? const Icon(Iconsax.moon)
-                              : const Icon(Iconsax.sun),
+                              : const Icon(Iconsax.sun_1),
                         ),
                         IconButton(
                           onPressed: () => {},
@@ -69,14 +132,17 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Text(
                       "#SpecialForYou",
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    TextButton(
-                        onPressed: () => {},
-                        child: Text(
-                          "See More",
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ))
+                    // TextButton(
+                    //     onPressed: () => {},
+                    //     child: Text(
+                    //       "See More",
+                    //       style: Theme.of(context).textTheme.headlineSmall,
+                    //     ))
                   ],
                 ),
               ),
@@ -85,38 +151,41 @@ class _HomePageState extends State<HomePage> {
                 child: SizedBox(
                   height: 180, // Set the height for the PageView
                   child: PageView(
-                    controller: PageController(
-                      viewportFraction:
-                          0.9, // Controls the size of visible pages
-                    ),
+                    controller: _pageController,
                     children: [
                       Container(
-                        margin: const EdgeInsets.only(right: 10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: Theme.of(context).cardColor,
-                        ),
-                        width: MediaQuery.sizeOf(context).width - 25,
-                        child: const Center(
-                          child: Text("Carousel Offer 1"),
-                        ),
-                      ),
+                          margin: const EdgeInsets.only(right: 10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            color: Theme.of(context).cardColor,
+                          ),
+                          width: MediaQuery.sizeOf(context).width - 25,
+                          child: Image.asset(
+                            "lib/assets/images/offer_1.jpg",
+                            fit: BoxFit.cover,
+                          )),
                       Container(
-                        margin: const EdgeInsets.only(right: 10),
-                        width: MediaQuery.sizeOf(context).width - 25,
-                        color: Theme.of(context).cardColor,
-                        child: const Center(
-                          child: Text("Carousel Offer 2"),
-                        ),
-                      ),
+                          margin: const EdgeInsets.only(right: 10),
+                          width: MediaQuery.sizeOf(context).width - 25,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            color: Theme.of(context).cardColor,
+                          ),
+                          child: Image.asset(
+                            "lib/assets/images/offer_2.jpg",
+                            fit: BoxFit.cover,
+                          )),
                       Container(
-                        margin: const EdgeInsets.only(right: 10),
-                        width: MediaQuery.sizeOf(context).width - 25,
-                        color: Theme.of(context).cardColor,
-                        child: const Center(
-                          child: Text("Carousel Offer 3"),
-                        ),
-                      ),
+                          margin: const EdgeInsets.only(right: 10),
+                          width: MediaQuery.sizeOf(context).width - 25,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            color: Theme.of(context).cardColor,
+                          ),
+                          child: Image.asset(
+                            "lib/assets/images/offer_3.jpg",
+                            fit: BoxFit.cover,
+                          )),
                     ],
                   ),
                 ),
@@ -132,11 +201,14 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Text(
                       "Your Recent Bookings ",
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     TextButton(
                         onPressed: () {
-                          widget.onNavigateToBookings!();
+                          widget.onNavigateToServices!();
                         },
                         child: Text(
                           "All Bookings",
@@ -173,7 +245,7 @@ class _HomePageState extends State<HomePage> {
                       CustomElevatedButton(
                           text: "Book Appointment",
                           icon: Icons.sensor_occupied,
-                          onPressed: () => {widget.onNavigateToBookings!()})
+                          onPressed: () => {widget.onNavigateToServices!()})
                     ],
                   )),
                 ),
@@ -189,7 +261,10 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Text(
                       "Popular Services",
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     TextButton(
                         onPressed: () => {widget.onNavigateToServices!()},
@@ -200,34 +275,47 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               ),
-              const Padding(
-                padding:
-                    EdgeInsets.only(top: 0.0, left: 15, right: 15, bottom: 5),
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 0.0, left: 15, right: 15, bottom: 5),
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
-                    children: [
-                      ModernServiceTile(
-                        serviceName: "Haircut",
-                        price: "Rs. 500.00",
-                        icon: Iconsax.flash_1,
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      ModernServiceTile(
-                        serviceName: "Haircut",
-                        price: "Rs. 500.00",
-                        icon: Iconsax.scissor_1,
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                    ],
+                    children: services.map((service) {
+                      return Row(
+                        children: [
+                          Hero(
+                            tag: service["tag"],
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => DetailsPage(
+                                      tag: service["tag"],
+                                      serviceName: service["serviceName"],
+                                      price: service["price"],
+                                      imageurl: service["image"],
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: ModernServiceTile(
+                                serviceName: service["serviceName"],
+                                price: service["price"],
+                                icon: service["icon"],
+                                imageurl: service["image"],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                        ],
+                      );
+                    }).toList(),
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 25,
               ),
               Padding(

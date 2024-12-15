@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
+import 'package:trendz_customer/Models/service_modal.dart';
 
 class ApiService {
   final Dio _dio = Dio(BaseOptions(
     baseUrl: "http://128.199.31.7",
+    // baseUrl: "http://192.168.8.145",
     headers: {"Content-Type": "application/json"},
   ));
 
@@ -34,6 +36,19 @@ class ApiService {
         throw e.response?.data["message"] ?? "OAuth login failed";
       }
       throw "An unexpected error occurred";
+    }
+  }
+
+  Future<List<Service>> fetchServices() async {
+    try {
+      final response = await _dio.get('/api/services');
+      if (response.statusCode == 200) {
+        List data = response.data as List;
+        return data.map((json) => Service.fromJson(json)).toList();
+      }
+      throw Exception('Failed to fetch services');
+    } catch (e) {
+      throw Exception('Error: $e');
     }
   }
 }

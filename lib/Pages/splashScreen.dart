@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:trendz_customer/Pages/onboarding.dart';
+import 'package:trendz_customer/Screens/App/Home_screen.dart';
 
 class Splashscreen extends StatefulWidget {
   const Splashscreen({super.key});
@@ -9,16 +11,34 @@ class Splashscreen extends StatefulWidget {
 }
 
 class _SplashscreenState extends State<Splashscreen> {
+  final secureStorage = FlutterSecureStorage();
+
   @override
   void initState() {
     super.initState();
-    // Set a delay of 3 seconds before navigating to the next screen
-    Future.delayed(const Duration(seconds: 3), () {
-      // Navigate to the Onboarding screen after the splash screen
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const Onboarding()),
+    _navigateBasedOnToken();
+  }
+
+  Future<void> _navigateBasedOnToken() async {
+    final token = await secureStorage.read(key: "token");
+
+    // Add a delay of 1 second
+    await Future.delayed(const Duration(milliseconds: 700));
+
+    if (!mounted) return; // Avoid navigation if the widget is disposed
+    if (token == null || token.isEmpty) {
+      // Navigate to Onboarding screen if no token
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Onboarding()),
       );
-    });
+    } else {
+      // Navigate to HomeScreen if token exists
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen()),
+      );
+    }
   }
 
   @override
@@ -30,9 +50,7 @@ class _SplashscreenState extends State<Splashscreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(
-              height: 60,
-            ),
+            const SizedBox(height: 60),
             // Title text
             Text("Trendz Hair Studio",
                 style: Theme.of(context).textTheme.headlineLarge),

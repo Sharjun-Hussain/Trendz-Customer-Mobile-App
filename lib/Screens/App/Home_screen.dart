@@ -15,9 +15,19 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  String selectedDate = "Select Date"; // Shared state for date
+  String selectedLocation = ""; //Shared state for branch
+
   int _selectedPageIndex = 0; // Tracks the currently selected page
   final PageController _pageController =
       PageController(); // Controls the PageView
+
+  void _updateDateAndLocation(String date, String location) {
+    setState(() {
+      selectedDate = date;
+      selectedLocation = location;
+    });
+  }
 
   // Navigate to a page using PageView animation
   void _onNavTap(int index) {
@@ -40,10 +50,14 @@ class _HomeScreenState extends State<HomeScreen> {
       HomePage(
           onNavigateToBookings: () => _onNavTap(3),
           onNavigateToServices: () => _onNavTap(1)),
-      ServicePage(
-        onNavigateToCart: () => _onNavTap(2), // Navigate to CartPage
+      ServicePage(onNavigateToCart: (String date, String location) {
+        _updateDateAndLocation(date, location);
+        _onNavTap(2); // Navigate to CartPage
+      }),
+      CartPage(
+        selectedDate: selectedDate,
+        selectedLocation: selectedLocation,
       ),
-      const CartPage(),
       const BookingPage(),
       const ProfilePage(),
     ];
@@ -58,14 +72,15 @@ class _HomeScreenState extends State<HomeScreen> {
             const NeverScrollableScrollPhysics(), // Disables swipe navigation
       ),
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(icon: Icon(Iconsax.home_2), label: "Home"),
           BottomNavigationBarItem(
-              icon: Icon(Iconsax.activity4), label: "Service"),
+              icon: Icon(Iconsax.activity4), label: "Services"),
           BottomNavigationBarItem(
               icon: Icon(Iconsax.shopping_cart), label: "Cart"),
           BottomNavigationBarItem(
-              icon: Icon(Iconsax.receipt), label: "Booking"),
+              icon: Icon(Iconsax.receipt), label: "My Bookings"),
           BottomNavigationBarItem(
               icon: Icon(Iconsax.frame_1), label: "Profile"),
         ],

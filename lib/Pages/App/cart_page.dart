@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:trendz_customer/Components/BookingPopup.dart';
 
 class CartPage extends StatefulWidget {
-  const CartPage({super.key});
+  String selectedLocation; // Default branch
+  String selectedDate;
+  CartPage(
+      {super.key, required this.selectedDate, required this.selectedLocation});
 
   @override
   _CartPageState createState() => _CartPageState();
@@ -41,6 +45,7 @@ class _CartPageState extends State<CartPage> {
 
   List<Map<String, String>> selectedServices = [];
   String selectedTime = "Not Selected";
+  // Default date
 
   @override
   void initState() {
@@ -64,6 +69,20 @@ class _CartPageState extends State<CartPage> {
     });
   }
 
+  void handleBooking() {
+    if (widget.selectedDate == "Select Date" ||
+        selectedTime == "Not Selected" ||
+        selectedServices.isEmpty) {
+      // Show error if any field is not selected
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please select all fields")),
+      );
+    } else {
+      // Proceed if both fields are valid
+      _showConfirmationDialog(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final int totalPrice = selectedServices.fold(
@@ -73,16 +92,14 @@ class _CartPageState extends State<CartPage> {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(
           "Cart",
-          style: Theme.of(context).textTheme.bodySmall,
+          style: Theme.of(context)
+              .textTheme
+              .bodyMedium
+              ?.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        actions: const [
-          Text("Sainthamaruthu"),
-          SizedBox(width: 30),
-          Icon(Iconsax.trash),
-          SizedBox(width: 20),
-        ],
       ),
       body: CustomScrollView(
         slivers: [
@@ -90,6 +107,94 @@ class _CartPageState extends State<CartPage> {
           SliverList(
             delegate: SliverChildListDelegate(
               [
+                SizedBox(
+                  height: 8,
+                ),
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(horizontal: 15),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //     children: [
+                //       // Location Dropdown
+                //       Expanded(
+                //         flex: 1,
+                //         child: DropdownButtonFormField<String>(
+                //           value: selectedLocation,
+                //           decoration: InputDecoration(
+                //             labelText: "Location",
+                //             labelStyle: Theme.of(context).textTheme.bodyMedium,
+                //             border: OutlineInputBorder(
+                //               borderRadius: BorderRadius.circular(8.0),
+                //             ),
+                //           ),
+                //           items: [
+                //             "Sainthamaruthu",
+                //             "Maruthamunai",
+                //           ]
+                //               .map((location) => DropdownMenuItem(
+                //                     value: location,
+                //                     child: Text(
+                //                       location,
+                //                       style:
+                //                           Theme.of(context).textTheme.bodySmall,
+                //                     ),
+                //                   ))
+                //               .toList(),
+                //           onChanged: (value) {
+                //             setState(() {
+                //               selectedLocation = value!;
+                //             });
+                //           },
+                //         ),
+                //       ),
+                //       const SizedBox(width: 10),
+
+                //       // Date Picker
+                //       Expanded(
+                //         flex: 1,
+                //         child: GestureDetector(
+                //           onTap: () async {
+                //             DateTime now = DateTime.now();
+                //             DateTime threeDaysLater =
+                //                 now.add(const Duration(days: 2));
+
+                //             DateTime? pickedDate = await showDatePicker(
+                //               context: context,
+                //               initialDate: now,
+                //               firstDate: now,
+                //               lastDate: threeDaysLater,
+                //             );
+
+                //             if (pickedDate != null) {
+                //               setState(() {
+                //                 selectedDate =
+                //                     "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+                //               });
+                //             }
+                //           },
+                //           child: Container(
+                //             padding: const EdgeInsets.symmetric(
+                //                 horizontal: 12.0, vertical: 12.0),
+                //             decoration: BoxDecoration(
+                //               border: Border.all(color: Colors.grey),
+                //               borderRadius: BorderRadius.circular(8.0),
+                //             ),
+                //             child: Text(
+                //               selectedDate == null
+                //                   ? "Select Date"
+                //                   : selectedDate,
+                //               style: TextStyle(
+                //                 color: selectedDate == null
+                //                     ? Theme.of(context).primaryColor
+                //                     : Theme.of(context).primaryColor,
+                //               ),
+                //             ),
+                //           ),
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
                 const SizedBox(height: 16),
                 Padding(
                   padding: EdgeInsets.symmetric(
@@ -110,7 +215,7 @@ class _CartPageState extends State<CartPage> {
                   final isSelected = selectedServices.contains(service);
                   return Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 8.0),
+                        horizontal: 16.0, vertical: 3.0),
                     child: GestureDetector(
                       onTap: () => toggleServiceSelection(service),
                       child: Container(
@@ -142,8 +247,8 @@ class _CartPageState extends State<CartPage> {
                               borderRadius: BorderRadius.circular(8),
                               child: Image.asset(
                                 service["image"]!,
-                                width: 40,
-                                height: 40,
+                                width: 30,
+                                height: 30,
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -152,18 +257,17 @@ class _CartPageState extends State<CartPage> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  Text(service["name"]!,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall),
+                                  const SizedBox(height: 8),
                                   Text(
-                                    service["name"]!,
+                                    service["price"]!,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodySmall
                                         ?.copyWith(fontWeight: FontWeight.w600),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    service["price"]!,
-                                    style:
-                                        Theme.of(context).textTheme.bodySmall,
                                   ),
                                 ],
                               ),
@@ -180,7 +284,7 @@ class _CartPageState extends State<CartPage> {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 16.0, vertical: 8.0),
                   child: Text(
-                    "Select Time Slot",
+                    "Select your preferred time ",
                     style: Theme.of(context)
                         .textTheme
                         .bodySmall
@@ -213,122 +317,171 @@ class _CartPageState extends State<CartPage> {
                     }).toList(),
                   ),
                 ),
-                // Booking Summary
                 const SizedBox(height: 16),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 8.0),
-                  child: Text(
-                    "Booking Summary",
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall
-                        ?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                ),
-
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(96, 124, 123, 123),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      const SizedBox(height: 5),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("Total Services:",
-                              style: Theme.of(context).textTheme.bodySmall),
-                          Text(
-                            "${selectedServices.length}",
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Booking Date:",
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                          Text(
-                            "12/12/2024",
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Booking Time:",
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                          Text(
-                            selectedTime,
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 5),
-                    ],
-                  ),
-                ),
               ],
             ),
           ),
         ],
       ),
-      bottomNavigationBar: Container(
-        color: Theme.of(context).primaryColor,
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    "Subtotal:",
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall
-                        ?.copyWith(color: Theme.of(context).cardColor),
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(96, 124, 123, 123),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                const SizedBox(height: 5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Total Services:",
+                        style: Theme.of(context).textTheme.bodySmall),
+                    Text(
+                      selectedServices.length.toString(),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Branch:",
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    Text(
+                      widget.selectedLocation,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Date:",
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    Text(
+                      widget.selectedDate,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Time Range:",
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    Text(
+                      selectedTime,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  children: [
+                    Text("Total Amount:",
+                        style: Theme.of(context).textTheme.bodySmall),
+                    Text(
+                      "LKR $totalPrice",
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: GestureDetector(
+                  onTap: handleBooking,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                    width: double.infinity,
+                    height: 60,
+                    color: Theme.of(context).primaryColor,
+                    child: Center(
+                      child: Text(
+                        "Confirm",
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).cardColor,
+                            ),
+                      ),
+                    ),
                   ),
-                  Text(
-                    "LKR $totalPrice",
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium
-                        ?.copyWith(color: Theme.of(context).cardColor),
-                  ),
-                ],
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  void _showConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Order'),
+          content: const Text('Are you sure you want to confirm the order?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close dialog
+              },
+              child: Text(
+                'Cancel',
+                style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
             ElevatedButton(
               onPressed: () {
-                // Function to book the appointment
+                Navigator.of(context).pop(); // Close dialog
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return BookingPopup(
+                          bookingDate: widget.selectedDate,
+                          bookingTime: selectedTime,
+                          bookingReference: "SLDD11223452332",
+                          bookingNumber: "B0221",
+                          onAcknowledge: () => Navigator.of(context).pop());
+                    });
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).cardColor,
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 24.0, vertical: 12.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
               child: Text(
-                "Book Appointment",
-                style: Theme.of(context).textTheme.bodyMedium,
+                'Yes',
+                style: Theme.of(context).textTheme.titleSmall,
               ),
             ),
           ],
-        ),
+        );
+      },
+    );
+  }
+
+  void _showSuccessAlert(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Order confirmed successfully!'),
+        duration: Duration(seconds: 2),
+        backgroundColor: Colors.green,
       ),
     );
   }

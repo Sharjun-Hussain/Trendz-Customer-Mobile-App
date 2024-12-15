@@ -20,10 +20,14 @@ class _BookingPageState extends State<BookingPage> {
           centerTitle: true,
           title: Text(
             "Booking",
-            style: Theme.of(context).textTheme.bodySmall,
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           bottom: TabBar(
             indicatorColor: Theme.of(context).primaryColor,
+            labelStyle: Theme.of(context).textTheme.bodySmall,
             tabs: const [
               Tab(
                 text: "Upcomming",
@@ -40,7 +44,7 @@ class _BookingPageState extends State<BookingPage> {
         body: TabBarView(
           children: [
             UpcomingBookingsPage(),
-            CompletedBooking(),
+            CompletedBookingsPage(),
             CancelledBookingsPage()
           ],
         ),

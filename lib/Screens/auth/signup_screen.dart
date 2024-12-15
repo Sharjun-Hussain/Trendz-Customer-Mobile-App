@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:trendz_customer/Components/elevated_button.dart';
 import 'package:trendz_customer/Pages/onboarding.dart';
-import 'package:trendz_customer/Screens/App/Home_screen.dart';
+import 'package:trendz_customer/Screens/auth/otpVerification.dart';
 import 'package:trendz_customer/theming/app_colors.dart';
 import 'package:trendz_customer/widgets/form_input.dart';
 import 'package:trendz_customer/widgets/socialLogin.dart';
@@ -34,6 +35,25 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColor,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          tooltip: "Go Back",
+        ),
+        title: Text(
+          "Welcome To Trendz",
+          style: Theme.of(context)
+              .textTheme
+              .titleLarge
+              ?.copyWith(color: Colors.white),
+        ),
+        centerTitle: true,
+      ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,29 +61,17 @@ class _SignupScreenState extends State<SignupScreen> {
             ClipPath(
               clipper: BottomRoundedClipper(),
               child: Container(
-                height: 150,
+                height: 100,
                 width: double.infinity,
                 color: Theme.of(context).primaryColor,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 8),
-                    Text(
-                      "Welcome To Trendz",
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge
-                          ?.copyWith(color: Colors.white),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      "Register to Continue",
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(color: Colors.white),
-                    )
-                  ],
+                child: Center(
+                  child: Text(
+                    "Register to continue",
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(color: Colors.white),
+                  ),
                 ),
               ),
             ),
@@ -77,10 +85,24 @@ class _SignupScreenState extends State<SignupScreen> {
                       style: Theme.of(context).textTheme.headlineLarge),
                   const SizedBox(height: 35),
                   FormInput(
+                    inputController: fullNameController,
+                    inputType: "text",
+                    inputName: "Full Name",
+                    placeHolder: "Enter Full Name",
+                  ),
+                  const SizedBox(height: 25),
+                  FormInput(
                     inputController: emailController,
                     inputType: "email",
-                    inputName: "Email",
-                    placeHolder: "Enter Email",
+                    inputName: "Email ID",
+                    placeHolder: "Enter Email ",
+                  ),
+                  const SizedBox(height: 25),
+                  FormInput(
+                    inputController: locationController,
+                    inputType: "text",
+                    inputName: "Residence City",
+                    placeHolder: "Enter Residence City",
                   ),
                   const SizedBox(height: 25),
                   FormInput(
@@ -99,25 +121,11 @@ class _SignupScreenState extends State<SignupScreen> {
                     placeHolder: "Re-enter Password",
                   ),
                   const SizedBox(height: 25),
-                  FormInput(
-                    inputController: fullNameController,
-                    inputType: "text",
-                    inputName: "Full Name",
-                    placeHolder: "Enter Full Name",
-                  ),
-                  const SizedBox(height: 25),
-                  FormInput(
-                    inputController: locationController,
-                    inputType: "text",
-                    inputName: "Location",
-                    placeHolder: "Enter Location",
-                  ),
-                  const SizedBox(height: 25),
                   IntlPhoneField(
                     style: Theme.of(context).textTheme.bodySmall,
                     decoration: InputDecoration(
                       labelStyle: Theme.of(context).textTheme.bodySmall,
-                      labelText: 'Phone Number',
+                      labelText: 'Mobile Number',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                         borderSide:
@@ -159,18 +167,22 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                   const SizedBox(height: 25),
                   CustomElevatedButton(
-                    icon: Icons.cabin,
+                    icon: Iconsax.login_1,
                     text: "Register",
                     onPressed: () {
-                      Navigator.pushReplacement(
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const HomeScreen(),
+                          builder: (context) => OtpVerification(),
                         ),
                       );
                     },
                   ),
-                  const SizedBox(height: 35),
+                  const SizedBox(height: 25),
+                  Center(
+                    child: Text("or"),
+                  ),
+                  const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -180,7 +192,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: Text(
-                          "or sign in with",
+                          "Register with",
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ),
@@ -200,7 +212,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           socialImagePath: "lib/assets/images/google.png",
                         ),
                       ),
-                      SizedBox(width: 20),
+                      const SizedBox(width: 20),
                       Expanded(
                         child: Sociallogin(
                           handleSocialLogin: () => {},
@@ -213,7 +225,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -227,14 +239,13 @@ class _SignupScreenState extends State<SignupScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const Onboarding(),
+                        builder: (context) => Onboarding(),
                       ),
                     )
                   },
                   child: const Text(
                     "Login",
                     style: TextStyle(
-                      decoration: TextDecoration.underline,
                       color: AppColors.gold,
                     ),
                   ),

@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
 class CustomNavigation extends StatelessWidget {
-  final String navigationtitle;
   final Widget navigationIcon; // Keep it as a Widget to allow flexibility
+  final String navigationtitle;
+  final String? navigationsubtitle;
   final VoidCallback navigate;
 
   const CustomNavigation(
       {super.key,
       required this.navigationtitle,
+      this.navigationsubtitle,
       required this.navigationIcon,
       required this.navigate});
 
@@ -19,7 +21,6 @@ class CustomNavigation extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
         ),
-        height: 60,
         child: Column(
           children: [
             Row(
@@ -33,26 +34,44 @@ class CustomNavigation extends StatelessWidget {
                       const SizedBox(
                         width: 10,
                       ),
-                      Text(
-                        navigationtitle,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
+                      navigationsubtitle != null &&
+                              navigationsubtitle!.isNotEmpty
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  navigationtitle,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(fontSize: 15),
+                                ),
+                                Text(
+                                  navigationsubtitle!,
+                                  style: Theme.of(context).textTheme.labelSmall,
+                                ),
+                              ],
+                            )
+                          : Text(
+                              navigationtitle,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
                     ],
                   ),
                 ),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.arrow_forward_ios,
-                      size: 24,
-                      weight: 3,
-                      color: Theme.of(context).primaryColor,
-                    ), // Use the widget directly here
-                    SizedBox(
-                      width: 6,
-                    ),
-                  ],
-                ),
+                // Row(
+                //   children: [
+                //     Icon(
+                //       Icons.arrow_forward_ios,
+                //       size: 24,
+                //       weight: 3,
+                //       color: Theme.of(context).primaryColor,
+                //     ), // Use the widget directly here
+                //     SizedBox(
+                //       width: 6,
+                //     ),
+                //   ],
+                // ),
               ],
             ),
           ],

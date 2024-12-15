@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import 'package:trendz_customer/Components/elevated_button.dart';
@@ -13,20 +15,32 @@ import 'package:trendz_customer/widgets/form_input.dart';
 import 'package:trendz_customer/widgets/socialLogin.dart';
 
 class Onboarding extends StatefulWidget {
-  const Onboarding({super.key});
+  Onboarding({super.key});
+
+  final securestorage = FlutterSecureStorage();
 
   void handleLogin(BuildContext context,
       Future<Map<String, dynamic>> Function() loginMethod) async {
     try {
-      final authService = AuthService();
       final response = await loginMethod();
       final user = User.fromJson(response);
-      // Provider.of<UserProvider>(context, listen: false).setUser(user);
-      Navigator.pushReplacement(
+
+      await securestorage.write(key: "token", value: user.token);
+      await securestorage.write(key: "userid", value: user.id.toString());
+      await securestorage.write(key: "fullname", value: user.fullName);
+      await securestorage.write(key: "status", value: user.status.toString());
+      await securestorage.write(key: "email", value: user.email);
+
+      Provider.of<UserProvider>(context, listen: false).setUser(user);
+      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const HomeScreen()),
+        (Route<dynamic> route) => false,
       );
     } catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(e.toString())));
     }
@@ -38,8 +52,36 @@ class Onboarding extends StatefulWidget {
 
 class _OnboardingState extends State<Onboarding> {
   final _formkey = GlobalKey<FormState>();
-  TextEditingController emailcontroller = TextEditingController();
-  TextEditingController passwordcontroller = TextEditingController();
+  final TextEditingController emailcontroller = TextEditingController();
+  final TextEditingController passwordcontroller = TextEditingController();
+
+  bool isButtonDisabled = true;
+
+  @override
+  void initState() {
+    super.initState();
+    // Add listeners to check for field updates
+    emailcontroller.addListener(_checkFormValidity);
+    passwordcontroller.addListener(_checkFormValidity);
+  }
+
+  @override
+  void dispose() {
+    emailcontroller.dispose();
+    passwordcontroller.dispose();
+    super.dispose();
+  }
+
+  void _checkFormValidity() {
+    final isFormValid =
+        emailcontroller.text.isNotEmpty && passwordcontroller.text.isNotEmpty;
+    if (isButtonDisabled != !isFormValid) {
+      setState(() {
+        isButtonDisabled = !isFormValid;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,7 +107,7 @@ class _OnboardingState extends State<Onboarding> {
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    "Sign in to Continue",
+                    "Signin to continue",
                     style: Theme.of(context)
                         .textTheme
                         .bodyMedium
@@ -122,48 +164,37 @@ class _OnboardingState extends State<Onboarding> {
                   ),
                   const SizedBox(height: 25),
                   CustomElevatedButton(
-                      icon: Iconsax.login,
-                      text: "Login",
-                      onPressed: () => {
-                            if (emailcontroller.text.isEmpty ||
-                                passwordcontroller.text.isEmpty)
-                              {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content:
-                                            Text("Please Fill All Fields ")))
-                              }
-                            else
-                              widget.handleLogin(
-                                context,
-                                () => AuthService().loginWithEmailPassword(
-                                  emailcontroller.text,
-                                  passwordcontroller.text,
-                                ),
+                    icon: Iconsax.login,
+                    text: "Login",
+                    onPressed: isButtonDisabled
+                        ? null // Disable button when form is invalid
+                        : () => widget.handleLogin(
+                              context,
+                              () => AuthService().loginWithEmailPassword(
+                                emailcontroller.text,
+                                passwordcontroller.text,
                               ),
-                          }),
-                  const SizedBox(height: 35),
+                            ),
+                  ),
+                  const SizedBox(height: 25),
+                  Center(
+                    child: Text("or"),
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Expanded(
-                        child: Divider(
-                          height: 1,
-                          color: AppColors.gold,
-                        ),
+                        child: Divider(height: 1, color: AppColors.gold),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: Text(
-                          "or sign in with",
+                          "Register with",
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ),
                       const Expanded(
-                        child: Divider(
-                          height: 1,
-                          color: AppColors.gold,
-                        ),
+                        child: Divider(height: 1, color: AppColors.gold),
                       ),
                     ],
                   ),
@@ -173,28 +204,21 @@ class _OnboardingState extends State<Onboarding> {
                     children: [
                       Expanded(
                         child: Sociallogin(
-                          handleSocialLogin: () => {
-                            () => widget.handleLogin(
-                                context, AuthService().loginWithGoogle),
-                          },
+                          handleSocialLogin: () => {},
                           name: "Google",
                           socialImagePath: "lib/assets/images/google.png",
                         ),
                       ),
-                      SizedBox(width: 20),
+                      const SizedBox(width: 20),
                       Expanded(
                         child: Sociallogin(
-                          handleSocialLogin: () => {
-                            () => widget.handleLogin(
-                                context, AuthService().loginWithGoogle),
-                          },
+                          handleSocialLogin: () => {},
                           name: "Facebook",
                           socialImagePath: "lib/assets/images/facebook.png",
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
