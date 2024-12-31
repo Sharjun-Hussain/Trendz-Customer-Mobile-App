@@ -4,38 +4,27 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import 'package:trendz_customer/Components/elevated_button.dart';
+import 'package:trendz_customer/Components/homepage_preferred_modal.dart';
+import 'package:trendz_customer/Models/service_modal.dart';
 import 'package:trendz_customer/Pages/App/service_view_page.dart';
+import 'package:trendz_customer/Pages/notification.dart';
 import 'package:trendz_customer/Providers/theme_provider.dart';
-import 'package:trendz_customer/Providers/user_provider.dart';
 import 'package:trendz_customer/widgets/Shop_Details.dart';
 import 'package:trendz_customer/widgets/service_tiles.dart';
 
 class HomePage extends StatefulWidget {
   final Function? onNavigateToServices;
   final Function? onNavigateToBookings;
+  final List<Services>? services;
   const HomePage(
-      {super.key, this.onNavigateToBookings, this.onNavigateToServices});
+      {super.key,
+      required this.services,
+      this.onNavigateToBookings,
+      this.onNavigateToServices});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
-
-final List<Map<String, dynamic>> services = [
-  {
-    "serviceName": "Haircut",
-    "price": "Rs. 500.00",
-    "icon": Iconsax.flash_1,
-    "tag": "hero-haircut",
-    "image": "lib/assets/images/haircut_service.jpg"
-  },
-  {
-    "serviceName": "Haircut",
-    "price": "Rs. 500.00",
-    "icon": Iconsax.scissor_1,
-    "tag": "hero-scissors",
-    "image": "lib/assets/images/haircut_service.jpg"
-  },
-];
 
 class _HomePageState extends State<HomePage> {
   late Timer _carouselTimer;
@@ -46,17 +35,45 @@ class _HomePageState extends State<HomePage> {
   String? _fullName;
 
   Future<void> _loadUserData() async {
-    // Read the full name from SecureStorage
     String? fullName = await secureStorage.read(key: "fullname");
 
     setState(() {
-      _fullName = fullName;
+      if (fullName != null && fullName.contains(' ')) {
+        _fullName = fullName.split(' ').last;
+      } else {
+        _fullName = fullName;
+      }
     });
+  }
+
+  Future<void> _initializeApp() async {
+    final String? firstTime = await secureStorage.read(key: 'first_time');
+
+    if (firstTime == null) {
+      await secureStorage.write(key: 'first_time', value: 'done');
+      _showbottomSheets(context);
+    }
+  }
+
+  void _showbottomSheets(BuildContext context) {
+    showModalBottomSheet(
+        useSafeArea: true,
+        isDismissible: false,
+        enableDrag: false,
+        isScrollControlled: true,
+        context: context,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        builder: (builder) {
+          return const HomepagePreferredModal();
+        });
   }
 
   @override
   void initState() {
     super.initState();
+    _initializeApp();
     _loadUserData();
     _pageController = PageController(viewportFraction: 0.9);
 
@@ -113,7 +130,28 @@ class _HomePageState extends State<HomePage> {
                               : const Icon(Iconsax.sun_1),
                         ),
                         IconButton(
-                          onPressed: () => {},
+                          onPressed: () => {
+                            showModalBottomSheet(
+                                isDismissible: true,
+                                isScrollControlled: true,
+                                useSafeArea: true,
+                                useRootNavigator: true,
+                                context: context,
+                                builder: (builder) {
+                                  return DraggableScrollableSheet(
+                                    initialChildSize: 1, // Start at 40% height
+                                    minChildSize: 0.3, // Minimum size
+                                    maxChildSize: 1, // Maximum size
+                                    expand: false,
+                                    builder: (context, scrollController) {
+                                      return SingleChildScrollView(
+                                        controller: scrollController,
+                                        child: const NotificationPage(),
+                                      );
+                                    },
+                                  );
+                                })
+                          },
                           icon: const Icon(Iconsax.notification4),
                         ),
                       ],
@@ -137,12 +175,6 @@ class _HomePageState extends State<HomePage> {
                           .bodyMedium
                           ?.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    // TextButton(
-                    //     onPressed: () => {},
-                    //     child: Text(
-                    //       "See More",
-                    //       style: Theme.of(context).textTheme.headlineSmall,
-                    //     ))
                   ],
                 ),
               ),
@@ -275,59 +307,55 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: 0.0, left: 15, right: 15, bottom: 5),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: services.map((service) {
-                      return Row(
-                        children: [
-                          Hero(
-                            tag: service["tag"],
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => DetailsPage(
-                                      tag: service["tag"],
-                                      serviceName: service["serviceName"],
-                                      price: service["price"],
-                                      imageurl: service["image"],
+              widget.services == null
+                  ? const Center(child: CircularProgressIndicator())
+                  : SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.17,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: widget.services?.length ?? 0,
+                        itemBuilder: (context, index) {
+                          final singleservice = widget.services![index];
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 10, left: 15),
+                            child: Hero(
+                              tag: singleservice.id!,
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => DetailsPage(
+                                        tag: singleservice.id!.toString(),
+                                        serviceName: singleservice.name,
+                                        price: singleservice.price,
+                                        imageurl: singleservice.icon,
+                                      ),
                                     ),
-                                  ),
-                                );
-                              },
-                              child: ModernServiceTile(
-                                serviceName: service["serviceName"],
-                                price: service["price"],
-                                icon: service["icon"],
-                                imageurl: service["image"],
+                                  );
+                                },
+                                child: ModernServiceTile(
+                                  serviceName: singleservice.name,
+                                  price: singleservice.price,
+                                  imageurl: singleservice.icon,
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 10),
-                        ],
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
+                          );
+                        },
+                      ),
+                    ),
               const SizedBox(
-                height: 25,
+                height: 10,
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 15.0,
-                ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15),
                 child: Row(
                   children: [
-                    Text(
-                      "Shop Details ",
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
+                    Text("Shop Details ",
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
                   ],
                 ),
               ),

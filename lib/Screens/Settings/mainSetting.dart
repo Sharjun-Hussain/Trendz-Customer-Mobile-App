@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:trendz_customer/Screens/Settings/branch/branch_setting.dart';
@@ -40,7 +41,7 @@ class Mainsetting extends StatelessWidget {
                 navigate: () => {
                       Navigator.push(
                           context,
-                          MaterialPageRoute(
+                          CupertinoPageRoute(
                               builder: (context) => ThemeSetting()))
                     }),
             CustomNavigation(
@@ -51,7 +52,7 @@ class Mainsetting extends StatelessWidget {
                 navigate: () => {
                       Navigator.push(
                           context,
-                          MaterialPageRoute(
+                          CupertinoPageRoute(
                               builder: (context) => BranchSetting()))
                     }),
             CustomNavigation(

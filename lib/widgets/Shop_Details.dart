@@ -36,96 +36,83 @@ class ShopDetails extends StatelessWidget {
           builder: (context) {
             return SizedBox(
               height: MediaQuery.of(context).size.height * 0.3,
-              child: Column(
-                children: [
-                  // Custom Close Button
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.close),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ],
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CloseButton(),
+                    Text(
+                      "Trendz Hair Studio",
+                      style: Theme.of(context).textTheme.headlineLarge,
                     ),
-                  ),
-
-                  // Shop Details
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Trendz Hair Studio",
-                          style: Theme.of(context).textTheme.headlineLarge,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          "Email: TrendzHairStudio@gmail.com",
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          "Contact: 077 98 98 445",
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        const SizedBox(height: 8),
-                        CustomElevatedButton(
-                            text: "Get Directions",
-                            icon: Iconsax.location,
-                            onPressed: _launchGoogleMaps)
-                      ],
+                    const SizedBox(height: 8),
+                    Text(
+                      "Email: TrendzHairStudio@gmail.com",
+                      style: Theme.of(context).textTheme.bodySmall,
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 4),
+                    Text(
+                      "Contact: 077 98 98 445",
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    const SizedBox(height: 8),
+                    CustomElevatedButton(
+                        text: "Get Directions",
+                        icon: Iconsax.location,
+                        onPressed: _launchGoogleMaps)
+                  ],
+                ),
               ),
             );
           },
         );
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            SizedBox(
-              width: 70,
-              child: Image.asset("lib/assets/images/logo.png"),
-            ),
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Trendz Saloon",
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineMedium
-                            ?.copyWith(fontSize: 20),
-                      ),
-                      Text(
-                        "153B, Akbar Road,",
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                      Text(
-                        "Maruthamunai, Sri Lanka",
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
-                  const Icon(Icons.location_on_outlined),
-                ],
+        padding: EdgeInsets.only(left: 15, right: 15, bottom: 15),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          decoration: BoxDecoration(
+            color: Theme.of(context).focusColor,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(
+                width: 70,
+                child: Image.asset("lib/assets/images/logo.png"),
               ),
-            ),
-          ],
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Trendz Saloon",
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineMedium
+                              ?.copyWith(fontSize: 20),
+                        ),
+                        Text(
+                          "153B, Akbar Road,",
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                        Text(
+                          "Maruthamunai, Sri Lanka",
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ],
+                    ),
+                    const Icon(Icons.location_on_outlined),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

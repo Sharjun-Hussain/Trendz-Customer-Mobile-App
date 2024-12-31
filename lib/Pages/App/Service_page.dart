@@ -1,21 +1,78 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:provider/provider.dart';
-import 'package:trendz_customer/Providers/user_provider.dart';
-import 'package:trendz_customer/theming/app_colors.dart';
+import 'dart:convert';
+import 'package:trendz_customer/Models/service_modal.dart';
+import 'package:intl/intl.dart';
+import 'package:trendz_customer/Pages/App/cart_page.dart';
+import 'package:trendz_customer/Services/api_services.dart';
 
 class ServicePage extends StatefulWidget {
-  final Function(String date, String branch)? onNavigateToCart;
-  const ServicePage({Key? key, this.onNavigateToCart}) : super(key: key);
+  final List<Services>? servicesFromHomeScreen;
+
+  final Function(
+    String date,
+    String branch,
+  )? onNavigateToCart;
+  const ServicePage(
+      {Key? key, required this.servicesFromHomeScreen, this.onNavigateToCart})
+      : super(key: key);
 
   @override
   State<ServicePage> createState() => _ServicePageState();
 }
 
 class _ServicePageState extends State<ServicePage> {
+  final ApiService apiService = ApiService();
   final securestorage = const FlutterSecureStorage();
   String? _fullname;
+
+  List<Services>? services;
+  bool isLoading = true;
+  List<Services>? cachedServices;
+  String? saloon_id;
+
+  final Map<String, String> locationMap = {
+    "Maruthamunai": "1",
+    "Sainthamaruthu": "2",
+  };
+
+  Future<void> _fetchServices(String value) async {
+    final id = await securestorage.read(key: "saloon_id");
+    // Fetch services from the API
+    services = await apiService.fetchServices(int.parse(value ?? "1"));
+
+    // Cache the services to FlutterSecureStorage
+    await securestorage.write(
+        key: "services",
+        value: json.encode(services!.map((e) => e.toJson()).toList()));
+
+    setState(() {
+      cachedServices = services; // Cache the services
+      isLoading = false; // Data is loaded, set loading to false
+    });
+  }
+
+  Future<void> _initializeData() async {
+    saloon_id = await securestorage.read(key: "saloon_id");
+    String? cachedServicesData = await securestorage.read(key: "services");
+
+    if (cachedServicesData != null) {
+      // Parse cached data
+      List<dynamic> servicesList = json.decode(cachedServicesData);
+      cachedServices = servicesList.map((e) => Services.fromJson(e)).toList();
+
+      // Use cached data if available
+      setState(() {
+        services = cachedServices;
+
+        isLoading = false;
+      });
+    } else {
+      // Fetch and cache data if not already cached
+      _fetchServices(saloon_id.toString());
+    }
+  }
 
   Future<void> _loadUserData() async {
     String? fullname = await securestorage.read(key: "fullname");
@@ -27,46 +84,14 @@ class _ServicePageState extends State<ServicePage> {
 
   @override
   void initState() {
+    super.initState();
     _loadUserData();
+    _initializeData();
   }
   // Services data
 
   String selectedLocation = "Maruthamunai"; // Default branch
-  String selectedDate = "Salect Date";
-  final List<Service> services = [
-    Service(
-      name: "Haircut",
-      description: "Professional haircut for all styles.",
-      price: "LKR 1,500",
-      duration: "30 minutes",
-      image: "lib/assets/images/haircut.png",
-      isSelected: false,
-    ),
-    Service(
-      name: "Beard Trim",
-      description: "Get a neat and stylish beard trim.",
-      price: "LKR 800",
-      duration: "20 minutes",
-      image: "lib/assets/images/makeup.png",
-      isSelected: false,
-    ),
-    Service(
-      name: "Head Massage",
-      description: "Relaxing and refreshing head massage.",
-      price: "LKR 1,200",
-      duration: "25 minutes",
-      image: "lib/assets/images/massage.png",
-      isSelected: false,
-    ),
-    Service(
-      name: "Makeup",
-      description: "Professional makeup for all occasions.",
-      price: "LKR 2,500",
-      duration: "45 minutes",
-      image: "lib/assets/images/makeup.png",
-      isSelected: false,
-    ),
-  ];
+  String selectedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
 
   @override
   Widget build(BuildContext context) {
@@ -131,10 +156,7 @@ class _ServicePageState extends State<ServicePage> {
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),
                               ),
-                              items: [
-                                "Sainthamaruthu",
-                                "Maruthamunai",
-                              ]
+                              items: locationMap.keys
                                   .map((location) => DropdownMenuItem(
                                         value: location,
                                         child: Text(
@@ -145,10 +167,16 @@ class _ServicePageState extends State<ServicePage> {
                                         ),
                                       ))
                                   .toList(),
-                              onChanged: (value) {
+                              onChanged: (value) async {
+                                print(locationMap[value]);
+                                await securestorage.write(
+                                    key: "saloon_id",
+                                    value: locationMap[value]); // Store the ID
                                 setState(() {
                                   selectedLocation = value!;
                                 });
+                                await _fetchServices(
+                                    locationMap[value].toString());
                               },
                             ),
                           ),
@@ -160,14 +188,14 @@ class _ServicePageState extends State<ServicePage> {
                             child: GestureDetector(
                               onTap: () async {
                                 DateTime now = DateTime.now();
-                                DateTime threeDaysLater =
-                                    now.add(const Duration(days: 2));
+                                DateTime thirtyDaysLater =
+                                    now.add(const Duration(days: 30));
 
                                 DateTime? pickedDate = await showDatePicker(
                                   context: context,
                                   initialDate: now,
                                   firstDate: now,
-                                  lastDate: threeDaysLater,
+                                  lastDate: thirtyDaysLater,
                                 );
 
                                 if (pickedDate != null) {
@@ -185,15 +213,17 @@ class _ServicePageState extends State<ServicePage> {
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),
                                 child: Text(
-                                  selectedDate == null
-                                      ? "Select Date"
-                                      : selectedDate,
-                                  style: TextStyle(
-                                    color: selectedDate == null
-                                        ? Theme.of(context).primaryColor
-                                        : Theme.of(context).primaryColor,
-                                  ),
-                                ),
+                                    selectedDate == null
+                                        ? "Select Date"
+                                        : selectedDate,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.copyWith(
+                                          color: selectedDate == null
+                                              ? Theme.of(context).primaryColor
+                                              : Theme.of(context).primaryColor,
+                                        )),
                               ),
                             ),
                           ),
@@ -201,88 +231,101 @@ class _ServicePageState extends State<ServicePage> {
                       ),
                     ),
                     // Services List
-                    Column(
-                      children: services.map((service) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 2.0),
-                          child: Card(
-                            color: Theme.of(context).cardColor,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)),
-                            elevation: 3,
-                            child: ExpansionTile(
-                              leading: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    icon: Icon(
-                                      service.isSelected
-                                          ? Icons.check_circle
-                                          : Icons.circle_outlined,
-                                      color: service.isSelected
-                                          ? Colors.green
-                                          : Colors.grey,
+                    services == null
+                        ? const Center(child: CircularProgressIndicator())
+                        : SizedBox(
+                            height: MediaQuery.sizeOf(context).height - 200,
+                            child: ListView.builder(
+                              scrollDirection: Axis.vertical,
+                              itemCount: services?.length ?? 0,
+                              itemBuilder: (context, index) {
+                                final singleservice = services![index];
+                                return Container(
+                                  width: MediaQuery.sizeOf(context).width,
+                                  child: Card(
+                                    color: Theme.of(context).cardColor,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(12)),
+                                    elevation: 3,
+                                    child: ExpansionTile(
+                                      leading: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          IconButton(
+                                            icon: Icon(
+                                              singleservice.isSelected!
+                                                  ? Icons.check_circle
+                                                  : Icons.circle_outlined,
+                                              color: singleservice.isSelected!
+                                                  ? Colors.green
+                                                  : Colors.grey,
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                singleservice.isSelected =
+                                                    !singleservice.isSelected!;
+                                              });
+                                            },
+                                          ),
+                                          Image.asset(
+                                            singleservice.icon,
+                                            width: 40,
+                                            height: 40,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ],
+                                      ),
+                                      title: Text(
+                                        singleservice.name,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium,
+                                      ),
+                                      subtitle: Text(
+                                        "Rs. ${singleservice.price} ",
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(
+                                                color: Theme.of(context)
+                                                    .primaryColor),
+                                      ),
+                                      trailing: Icon(
+                                        singleservice!.isExpanded!
+                                            ? Iconsax.arrow_up_2
+                                            : Iconsax.arrow_down_1,
+                                      ),
+                                      onExpansionChanged: (isExpanded) {
+                                        setState(() {
+                                          singleservice.isExpanded = isExpanded;
+                                        });
+                                      },
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 8.0),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                  "Duration: ${singleservice.duration}"),
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                  "Description: ${singleservice.description}"),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    onPressed: () {
-                                      setState(() {
-                                        service.isSelected =
-                                            !service.isSelected;
-                                      });
-                                    },
                                   ),
-                                  Image.asset(
-                                    service.image,
-                                    width: 40,
-                                    height: 40,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ],
-                              ),
-                              title: Text(
-                                service.name,
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                              subtitle: Text(
-                                service.price,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(
-                                        color: Theme.of(context).primaryColor),
-                              ),
-                              trailing: Icon(
-                                service.isExpanded
-                                    ? Iconsax.arrow_up_2
-                                    : Iconsax.arrow_down_1,
-                              ),
-                              onExpansionChanged: (isExpanded) {
-                                setState(() {
-                                  service.isExpanded = isExpanded;
-                                });
+                                );
                               },
-                              children: [
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 8.0),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text("Duration: ${service.duration}"),
-                                      const SizedBox(height: 4),
-                                      Text("${service.description}"),
-                                    ],
-                                  ),
-                                ),
-                              ],
                             ),
                           ),
-                        );
-                      }).toList(),
-                    ),
                   ],
                 ),
               ),
@@ -296,9 +339,29 @@ class _ServicePageState extends State<ServicePage> {
                 onPressed: () {
                   if (selectedDate != "Select Date" &&
                       selectedLocation.isNotEmpty) {
-                    widget.onNavigateToCart!(selectedDate, selectedLocation);
+                    List<Services> selectedServices = services
+                            ?.where((service) => service.isSelected ?? false)
+                            .toList() ??
+                        [];
+                    if (selectedServices.isNotEmpty) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CartPage(
+                            selectedServicesFromServicePage: selectedServices,
+                            selectedDate: selectedDate,
+                            selectedLocation: selectedLocation,
+                          ),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content:
+                                Text("Please select at least one service")),
+                      );
+                    }
                   } else {
-                    // Show an error message if fields are empty
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                           content:
@@ -316,9 +379,12 @@ class _ServicePageState extends State<ServicePage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
+                    Text(
                       "Next",
-                      style: TextStyle(fontSize: 16),
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     SizedBox(
                       width: 4,
@@ -334,24 +400,4 @@ class _ServicePageState extends State<ServicePage> {
       ),
     );
   }
-}
-
-class Service {
-  final String name;
-  final String description;
-  final String price;
-  final String duration;
-  final String image;
-  bool isSelected;
-  bool isExpanded;
-
-  Service({
-    required this.name,
-    required this.description,
-    required this.price,
-    required this.duration,
-    required this.image,
-    this.isSelected = false,
-    this.isExpanded = false,
-  });
 }

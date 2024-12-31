@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:iconsax/iconsax.dart';
@@ -93,25 +94,27 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 const SizedBox(height: 20),
                 CustomNavigation(
-                  navigate: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const PersonalPage()));
-                    // Navigate to a specific profile detail page
-                  },
-                  navigationtitle: "Your Profile",
                   navigationIcon: Icon(
-                    Iconsax.personalcard,
+                    Iconsax.devices,
                     color: Theme.of(context).primaryColor,
                   ),
+                  navigationtitle: "App Updates",
+                  navigate: () {
+                    Navigator.push(
+                      context,
+                      CupertinoPageRoute(
+                        builder: (context) =>
+                            Mainsetting(), // Replace with your target page
+                      ),
+                    );
+                  },
                 ),
                 CustomNavigation(
                   navigate: () {
                     Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => const Mainsetting()));
+                        CupertinoPageRoute(
+                            builder: (context) => Mainsetting()));
                     // Navigate to a settings page
                   },
                   navigationtitle: "Settings",

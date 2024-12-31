@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:lottie/lottie.dart';
-import 'package:trendz_customer/Components/elevated_button%20copy.dart';
 import 'package:trendz_customer/theming/app_colors.dart';
 
 class BookingPopup extends StatelessWidget {

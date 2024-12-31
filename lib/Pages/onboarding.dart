@@ -24,12 +24,13 @@ class Onboarding extends StatefulWidget {
     try {
       final response = await loginMethod();
       final user = User.fromJson(response);
+      print(user.message.toString());
 
       await securestorage.write(key: "token", value: user.token);
-      await securestorage.write(key: "userid", value: user.id.toString());
-      await securestorage.write(key: "fullname", value: user.fullName);
-      await securestorage.write(key: "status", value: user.status.toString());
-      await securestorage.write(key: "email", value: user.email);
+      await securestorage.write(key: "saloon_id", value: 1.toString());
+      await securestorage.write(key: "userid", value: user.data?.id.toString());
+      await securestorage.write(key: "fullname", value: user.data?.name);
+      await securestorage.write(key: "email", value: user.data?.email);
 
       Provider.of<UserProvider>(context, listen: false).setUser(user);
       Navigator.pushAndRemoveUntil(
@@ -143,6 +144,7 @@ class _OnboardingState extends State<Onboarding> {
                     inputController: passwordcontroller,
                     inputName: "Password",
                     placeHolder: "Enter Password",
+                    showPasswordRequirements: false,
                   ),
                   const SizedBox(height: 15),
                   Row(
@@ -180,6 +182,7 @@ class _OnboardingState extends State<Onboarding> {
                   Center(
                     child: Text("or"),
                   ),
+                  const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -189,7 +192,7 @@ class _OnboardingState extends State<Onboarding> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: Text(
-                          "Register with",
+                          "Login with",
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ),
@@ -198,7 +201,7 @@ class _OnboardingState extends State<Onboarding> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 25),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

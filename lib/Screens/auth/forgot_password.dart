@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import 'package:trendz_customer/Components/elevated_button.dart';
 import 'package:trendz_customer/Models/usermodel.dart';
+import 'package:trendz_customer/Pages/onboarding.dart';
 import 'package:trendz_customer/Providers/user_provider.dart';
 import 'package:trendz_customer/Screens/App/Home_screen.dart';
 import 'package:trendz_customer/Screens/auth/signup_screen.dart';
@@ -24,26 +26,34 @@ class _OnboardingState extends State<ForgotPassword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          "Trendz Hair Studio",
+          style: Theme.of(context)
+              .textTheme
+              .titleLarge
+              ?.copyWith(color: Colors.white),
+        ),
+        centerTitle: true,
+        backgroundColor: Theme.of(context).primaryColor,
+        iconTheme: IconThemeData(
+          color: Theme.of(context)
+              .cardColor, // Set the back button color to cardColor
+        ),
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipPath(
             clipper: BottomRoundedClipper(),
             child: Container(
-              height: 150,
+              height: 100,
               width: double.infinity,
               color: Theme.of(context).primaryColor,
               child: SafeArea(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      "Trendz Hair Studio",
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge
-                          ?.copyWith(color: Colors.white),
-                    ),
                     const SizedBox(height: 8),
                     Text(
                       "Forgot Password",
@@ -77,9 +87,8 @@ class _OnboardingState extends State<ForgotPassword> {
                     placeHolder: "Enter Email",
                   ),
                   const SizedBox(height: 25),
-                  const SizedBox(height: 25),
                   CustomElevatedButton(
-                      icon: Icons.cabin,
+                      icon: Iconsax.message_2,
                       text: "Send Verification Mail",
                       onPressed: () => {
                             if (emailcontroller.text.isEmpty)
@@ -116,56 +125,38 @@ class _OnboardingState extends State<ForgotPassword> {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text("Do you know the password?"),
-                      const SizedBox(
-                        width: 5,
-                      ),
                       GestureDetector(
-                        onTap: () => {
+                        onTap: () {
                           Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const SignupScreen()))
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Onboarding()),
+                          );
                         },
                         child: const Text(
                           "Please Login",
                           style: TextStyle(color: AppColors.gold),
                         ),
                       ),
-                      const SizedBox(
-                        height: 45,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text("Don't You have the Account?"),
-                      const SizedBox(
-                        width: 5,
-                      ),
+                      const SizedBox(width: 16), // Add space between the texts
                       GestureDetector(
-                        onTap: () => {
+                        onTap: () {
                           Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const SignupScreen()))
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const SignupScreen()),
+                          );
                         },
                         child: const Text(
                           "Please Register",
                           style: TextStyle(color: AppColors.gold),
                         ),
                       ),
-                      const SizedBox(
-                        height: 45,
-                      ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),

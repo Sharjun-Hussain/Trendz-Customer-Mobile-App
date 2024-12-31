@@ -19,7 +19,7 @@ class _BookingPageState extends State<BookingPage> {
         appBar: AppBar(
           centerTitle: true,
           title: Text(
-            "Booking",
+            "My bookings",
             style: Theme.of(context)
                 .textTheme
                 .bodyMedium

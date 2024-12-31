@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:trendz_customer/Components/elevated_button.dart';
+import 'package:trendz_customer/Models/customer_location_modal.dart';
 import 'package:trendz_customer/Pages/onboarding.dart';
 import 'package:trendz_customer/Screens/auth/otpVerification.dart';
+import 'package:trendz_customer/Services/api_services.dart';
 import 'package:trendz_customer/theming/app_colors.dart';
 import 'package:trendz_customer/widgets/form_input.dart';
 import 'package:trendz_customer/widgets/socialLogin.dart';
@@ -22,14 +24,93 @@ class _SignupScreenState extends State<SignupScreen> {
       TextEditingController();
   final TextEditingController locationController = TextEditingController();
   final TextEditingController fullNameController = TextEditingController();
-
+  List<CustomerLocationModal>? locationlist = [];
   String mobileNumber = ''; // To store the complete phone number
+  String selectedLocation = "Maruthamunai";
+  int selectedLocationid = 1;
+  String? selectedGender;
+
+  bool isUpperCase = false;
+  bool isLowerCase = false;
+  bool isNumber = false;
+  bool isSpecialChar = false;
+  bool isMinLength = false;
 
   String? _validateConfirmPassword(String value) {
     if (value != passwordController.text) {
       return 'Passwords do not match';
     }
     return null;
+  }
+
+  Widget _passwordRequirement(String text, bool isValid) {
+    return Row(
+      children: [
+        Icon(
+          isValid ? Icons.check_circle : Icons.cancel,
+          color: isValid ? Colors.green : Colors.red,
+        ),
+        const SizedBox(width: 8),
+        Text(text,
+            style: TextStyle(
+              color: isValid ? Colors.green : Colors.red,
+            )),
+      ],
+    );
+  }
+
+  void _handleRegister() async {
+    var result = await ApiService().RegisterWithEmailPassword(
+      emailController.text,
+      selectedLocationid,
+      fullNameController.text,
+      mobileNumber,
+      selectedGender!,
+      passwordController.text,
+    );
+
+    print(result);
+
+    if (result["success"] == true) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Registration Succesfull",
+            style: Theme.of(context).textTheme.titleSmall,
+          ),
+          backgroundColor: const Color.fromARGB(255, 71, 218, 76),
+        ),
+      );
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Onboarding()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result["message"]),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> fetchLocation() async {
+    try {
+      final response = await ApiService().fetchlocation();
+      setState(() {
+        locationlist = response.data;
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchLocation();
   }
 
   @override
@@ -98,27 +179,100 @@ class _SignupScreenState extends State<SignupScreen> {
                     placeHolder: "Enter Email ",
                   ),
                   const SizedBox(height: 25),
-                  FormInput(
-                    inputController: locationController,
-                    inputType: "text",
-                    inputName: "Residence City",
-                    placeHolder: "Enter Residence City",
+                  Text("Gender", style: Theme.of(context).textTheme.bodyMedium),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Radio(
+                              activeColor: Theme.of(context).primaryColor,
+                              value: 'Male',
+                              groupValue: selectedGender,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedGender = value.toString();
+                                });
+                              },
+                            ),
+                            const Text('Male'),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: 15,
+                      ),
+                      SizedBox(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Radio(
+                              activeColor: Theme.of(context).primaryColor,
+                              value: 'Female',
+                              groupValue: selectedGender,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedGender = value.toString();
+                                });
+                              },
+                            ),
+                            const Text('Female'),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 25),
+                  DropdownButtonFormField<String>(
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    value: selectedLocation,
+                    decoration: InputDecoration(
+                        isDense: true,
+                        labelText: "Residence City",
+                        labelStyle: Theme.of(context).textTheme.bodyMedium,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                          color: Theme.of(context).primaryColor,
+                        ))),
+                    items: locationlist?.map((location) {
+                          return DropdownMenuItem<String>(
+                            value: location.name,
+                            child: Text(location.name ?? "Unknown"),
+                          );
+                        }).toList() ??
+                        [], // Handle null list by providing an empty list
+                    onChanged: (value) {
+                      setState(() {
+                        selectedLocationid = locationlist!
+                            .firstWhere((element) => element.name == value)
+                            .id!;
+                        selectedLocation = value!;
+                      });
+                    },
                   ),
                   const SizedBox(height: 25),
                   FormInput(
-                    obscureText: true,
+                    inputName: 'Password',
+                    placeHolder: 'Create a password',
                     inputController: passwordController,
-                    inputType: "password",
-                    inputName: "Password",
-                    placeHolder: "Enter Password",
+                    inputType: 'password',
+                    obscureText: true,
+                    showPasswordRequirements:
+                        true, // Show password rules for registration
                   ),
                   const SizedBox(height: 25),
                   FormInput(
                     inputController: confirmPasswordController,
                     obscureText: true,
-                    inputType: "password",
+                    inputType: "confirmPassword",
                     inputName: "Confirm Password",
                     placeHolder: "Re-enter Password",
+                    originalPassword: passwordController.text,
                   ),
                   const SizedBox(height: 25),
                   IntlPhoneField(
@@ -167,17 +321,9 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                   const SizedBox(height: 25),
                   CustomElevatedButton(
-                    icon: Iconsax.login_1,
-                    text: "Register",
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => OtpVerification(),
-                        ),
-                      );
-                    },
-                  ),
+                      icon: Iconsax.login_1,
+                      text: "Register",
+                      onPressed: _handleRegister),
                   const SizedBox(height: 25),
                   Center(
                     child: Text("or"),
@@ -201,7 +347,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 25),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

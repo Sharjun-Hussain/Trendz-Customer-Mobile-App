@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CustomNavigation extends StatelessWidget {
@@ -59,19 +60,6 @@ class CustomNavigation extends StatelessWidget {
                     ],
                   ),
                 ),
-                // Row(
-                //   children: [
-                //     Icon(
-                //       Icons.arrow_forward_ios,
-                //       size: 24,
-                //       weight: 3,
-                //       color: Theme.of(context).primaryColor,
-                //     ), // Use the widget directly here
-                //     SizedBox(
-                //       width: 6,
-                //     ),
-                //   ],
-                // ),
               ],
             ),
           ],

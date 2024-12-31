@@ -1,36 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:trendz_customer/theming/app_colors.dart'; // Ensure AppColors is implemented correctly
 
 class ModernServiceTile extends StatelessWidget {
   final String serviceName;
   final String price;
-  final IconData icon;
+  // final IconData? icon;
   final String imageurl;
 
   const ModernServiceTile(
       {super.key,
       required this.serviceName,
       required this.price,
-      required this.icon,
+      // required this.icon,
       required this.imageurl});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.6,
-      height: 130,
+      // height: MediaQuery.of(context).size.height * 0.9,
       decoration: BoxDecoration(
-        image: DecorationImage(image: AssetImage(imageurl), fit: BoxFit.cover),
+        image:
+            DecorationImage(image: AssetImage(imageurl), fit: BoxFit.contain),
         borderRadius: BorderRadius.circular(12),
-        // gradient: LinearGradient(
-        //   colors: [
-        //     AppColors.secondaryGold,
-        //     AppColors.secondaryGold.withOpacity(0.8), // Lighter shade
-        //   ],
-        //   begin: Alignment.topRight,
-        //   end: Alignment.bottomLeft,
-        // ),
+        border: Border.all(width: 1, color: Theme.of(context).primaryColor),
+        color: Theme.of(context).focusColor,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
@@ -66,32 +60,7 @@ class ModernServiceTile extends StatelessWidget {
               ),
             ),
           ),
-          // Icon at the top right corner
-          // Positioned(
-          //   top: 10,
-          //   right: 10,
-          //   child: Container(
-          //     width: 50,
-          //     height: 50,
-          //     padding: const EdgeInsets.all(1.0),
-          //     decoration: BoxDecoration(
-          //       shape: BoxShape.circle,
-          //       color: Colors.white,
-          //       boxShadow: [
-          //         BoxShadow(
-          //           color: Colors.black.withOpacity(0.2),
-          //           offset: const Offset(0, 2),
-          //           blurRadius: 4,
-          //         ),
-          //       ],
-          //     ),
-          //     child: Icon(
-          //       icon,
-          //       color: AppColors.black,
-          //       size: 40,
-          //     ),
-          //   ),
-          // ),
+
           // Centered text for the service
           Positioned(
             bottom: 10,

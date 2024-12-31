@@ -1,80 +1,53 @@
 // To parse this JSON data, do
 //
-//     final user = userFromJson(jsonString);
+//     final shopDetails = shopDetailsFromJson(jsonString);
 
 import 'dart:convert';
 
-User userFromJson(String str) => User.fromJson(json.decode(str));
+ShopDetails shopDetailsFromJson(String str) =>
+    ShopDetails.fromJson(json.decode(str));
 
-String userToJson(User data) => json.encode(data.toJson());
+String shopDetailsToJson(ShopDetails data) => json.encode(data.toJson());
 
-class User {
-  bool? success;
-  String? message;
-  String? token;
-  Data? data;
-
-  User({
-    this.success,
-    this.message,
-    this.token,
-    this.data,
-  });
-
-  factory User.fromJson(Map<String, dynamic> json) => User(
-        success: json["success"],
-        message: json["message"],
-        token: json["token"],
-        data: json["data"] == null ? null : Data.fromJson(json["data"]),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "success": success,
-        "message": message,
-        "token": token,
-        "data": data?.toJson(),
-      };
-}
-
-class Data {
+class ShopDetails {
   int? id;
   int? locationId;
-  String? image;
+  String? code;
   String? name;
-  String? email;
-  dynamic emailVerifiedAt;
-  String? gender;
-  dynamic dob;
+  String? address;
   String? phoneNumber;
+  String? email;
+  int? status;
+  int? deleteStatus;
   DateTime? createdAt;
   DateTime? updatedAt;
   Location? location;
 
-  Data({
+  ShopDetails({
     this.id,
     this.locationId,
-    this.image,
+    this.code,
     this.name,
-    this.email,
-    this.emailVerifiedAt,
-    this.gender,
-    this.dob,
+    this.address,
     this.phoneNumber,
+    this.email,
+    this.status,
+    this.deleteStatus,
     this.createdAt,
     this.updatedAt,
     this.location,
   });
 
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
+  factory ShopDetails.fromJson(Map<String, dynamic> json) => ShopDetails(
         id: json["id"],
         locationId: json["location_id"],
-        image: json["image"],
+        code: json["code"],
         name: json["name"],
-        email: json["email"],
-        emailVerifiedAt: json["email_verified_at"],
-        gender: json["gender"],
-        dob: json["dob"],
+        address: json["address"],
         phoneNumber: json["phone_number"],
+        email: json["email"],
+        status: json["status"],
+        deleteStatus: json["delete_status"],
         createdAt: json["created_at"] == null
             ? null
             : DateTime.parse(json["created_at"]),
@@ -89,13 +62,13 @@ class Data {
   Map<String, dynamic> toJson() => {
         "id": id,
         "location_id": locationId,
-        "image": image,
+        "code": code,
         "name": name,
-        "email": email,
-        "email_verified_at": emailVerifiedAt,
-        "gender": gender,
-        "dob": dob,
+        "address": address,
         "phone_number": phoneNumber,
+        "email": email,
+        "status": status,
+        "delete_status": deleteStatus,
         "created_at": createdAt?.toIso8601String(),
         "updated_at": updatedAt?.toIso8601String(),
         "location": location?.toJson(),

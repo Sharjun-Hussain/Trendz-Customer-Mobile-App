@@ -1,10 +1,15 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:trendz_customer/Models/service_modal.dart';
+import 'package:trendz_customer/Models/shop_details_modal.dart';
 import 'package:trendz_customer/Pages/App/Home_page.dart';
 import 'package:trendz_customer/Pages/App/Service_page.dart';
 import 'package:trendz_customer/Pages/App/booking_page.dart';
 import 'package:trendz_customer/Pages/App/cart_page.dart';
 import 'package:trendz_customer/Pages/App/profile_page.dart';
+import 'package:trendz_customer/Services/api_services.dart';
 import 'package:trendz_customer/theming/app_colors.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -15,12 +20,22 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String selectedDate = "Select Date"; // Shared state for date
+  final ApiService apiService = ApiService();
+  final securestorage = FlutterSecureStorage();
+  String selectedDate = "Select Date";
+  String? saloon_id;
   String selectedLocation = ""; //Shared state for branch
+  late ShopDetails shopdetails;
+  List<Services>? services;
+  bool isLoading = true;
 
   int _selectedPageIndex = 0; // Tracks the currently selected page
   final PageController _pageController =
       PageController(); // Controls the PageView
+
+  // Cached data to avoid re-fetching on app restart
+  List<Services>? cachedServices;
+  ShopDetails? cachedShopDetails;
 
   void _updateDateAndLocation(String date, String location) {
     setState(() {
@@ -45,15 +60,91 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _initializeData();
+  }
+
+  Future<void> _initializeData() async {
+    saloon_id = await securestorage.read(key: "saloon_id");
+
+    // Check if services and shop details are cached in secure storage
+    String? cachedServicesData = await securestorage.read(key: "services");
+    String? cachedShopDetailsData =
+        await securestorage.read(key: "shopDetails");
+
+    if (cachedServicesData != null && cachedShopDetailsData != null) {
+      // Parse cached data
+      List<dynamic> servicesList = json.decode(cachedServicesData);
+      cachedServices = servicesList.map((e) => Services.fromJson(e)).toList();
+      cachedShopDetails =
+          ShopDetails.fromJson(json.decode(cachedShopDetailsData));
+
+      // Use cached data if available
+      setState(() {
+        services = cachedServices;
+        shopdetails = cachedShopDetails!;
+        isLoading = false;
+      });
+    } else {
+      // Fetch and cache data if not already cached
+      _fetchServices();
+      _fetchShopDetails();
+    }
+  }
+
+  Future<void> _fetchServices() async {
+    final id = await securestorage.read(key: "saloon_id");
+    // Fetch services from the API
+    services = await apiService.fetchServices(int.parse(id ?? "1"));
+
+    // Cache the services to FlutterSecureStorage
+    await securestorage.write(
+        key: "services",
+        value: json.encode(services!.map((e) => e.toJson()).toList()));
+
+    setState(() {
+      cachedServices = services; // Cache the services
+      isLoading = false; // Data is loaded, set loading to false
+    });
+  }
+
+  Future<void> _fetchShopDetails() async {
+    final id = await securestorage.read(key: "saloon_id");
+    shopdetails = await apiService.fetchshopDetails(int.parse(id ?? "1"));
+
+    // Cache the shop details to FlutterSecureStorage
+    await securestorage.write(
+        key: "shopDetails", value: json.encode(shopdetails.toJson()));
+
+    setState(() {
+      cachedShopDetails = shopdetails; // Cache the shop details
+      isLoading = false; // Data is loaded, set loading to false
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ), // Show a loading spinner
+      );
+    }
+
     final List<Widget> _pages = [
       HomePage(
-          onNavigateToBookings: () => _onNavTap(3),
-          onNavigateToServices: () => _onNavTap(1)),
-      ServicePage(onNavigateToCart: (String date, String location) {
-        _updateDateAndLocation(date, location);
-        _onNavTap(2); // Navigate to CartPage
-      }),
+        services: services,
+        onNavigateToBookings: () => _onNavTap(3),
+        onNavigateToServices: () => _onNavTap(1),
+      ),
+      ServicePage(
+          servicesFromHomeScreen: services,
+          onNavigateToCart: (String date, String location) {
+            _updateDateAndLocation(date, location);
+            _onNavTap(2); // Navigate to CartPage
+          }),
       CartPage(
         selectedDate: selectedDate,
         selectedLocation: selectedLocation,
