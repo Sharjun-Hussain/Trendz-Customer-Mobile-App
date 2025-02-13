@@ -39,14 +39,14 @@ class _BranchSettingState extends State<BranchSetting> {
             // Header Section
             Text(
               "Choose Your Preferred Branch",
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w600,
                   color: Theme.of(context).primaryColor),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 2),
             Text(
               "You can change your branch preference anytime.",
-              style: Theme.of(context).textTheme.bodySmall,
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(height: 16),
 
@@ -121,7 +121,7 @@ class _BranchSettingState extends State<BranchSetting> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
           color: isSelected
               ? Theme.of(context).primaryColor.withOpacity(0.1)
@@ -138,8 +138,8 @@ class _BranchSettingState extends State<BranchSetting> {
           children: [
             Text(
               branchName,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w500,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontSize: 18,
                     color: isSelected
                         ? Theme.of(context).primaryColor
                         : Theme.of(context).textTheme.bodyLarge?.color,
@@ -148,7 +148,7 @@ class _BranchSettingState extends State<BranchSetting> {
             if (isSelected)
               Icon(
                 Icons.check_circle,
-                size: 16,
+                size: 23,
                 color: Theme.of(context).primaryColor,
               ),
           ],

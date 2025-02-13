@@ -21,7 +21,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final ApiService apiService = ApiService();
-  final securestorage = FlutterSecureStorage();
+  final securestorage = const FlutterSecureStorage();
   String selectedDate = "Select Date";
   String? saloon_id;
   String selectedLocation = ""; //Shared state for branch
@@ -126,7 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return Scaffold(
+      return const Scaffold(
         body: Center(
           child: CircularProgressIndicator(),
         ), // Show a loading spinner

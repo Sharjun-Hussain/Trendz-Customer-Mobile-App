@@ -48,8 +48,6 @@ class _CartPageState extends State<CartPage> {
 
     // Check if services and shop details are cached in secure storage
     String? cachedServicesData = await securestorage.read(key: "cartservices");
-    String? cachedShopDetailsData =
-        await securestorage.read(key: "shopDetails");
 
     if (cachedServicesData != null) {
       // Parse cached data
@@ -104,8 +102,6 @@ class _CartPageState extends State<CartPage> {
       // Extract numeric price value from string (e.g. "Rs. 1,000" -> 1000)
       return sum + int.parse(service.price.split(".")[0]);
     });
-    print(totalPrice);
-    print(selectedServices);
 
     return Scaffold(
       appBar: AppBar(
@@ -170,7 +166,7 @@ class _CartPageState extends State<CartPage> {
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12)),
                                   elevation: 3,
-                                  child: ExpansionTile(
+                                  child: ListTile(
                                     leading: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
@@ -224,7 +220,6 @@ class _CartPageState extends State<CartPage> {
                                               color: Theme.of(context)
                                                   .primaryColor),
                                     ),
-                                    trailing: const Icon(Iconsax.arrow_up_2),
                                   ),
                                 ),
                               ),
